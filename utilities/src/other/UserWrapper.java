@@ -3,18 +3,15 @@ package other;
 import java.io.Serializable;
 import java.util.HashSet;
 
-//a wrapper class that packages all users so they can be saved to a file
 public class UserWrapper implements Serializable {
     private HashSet<User> list;
 
-    public UserWrapper()
-    {
-        list=new HashSet<>();
+    public UserWrapper() {
+        list = new HashSet<>();
     }
 
-    public UserWrapper(UserWrapper uw)
-    {
-       setSet(uw.getSet());
+    public UserWrapper(UserWrapper uw) {
+        setSet(uw.getSet());
     }
 
     public HashSet<User> getSet() {
@@ -22,23 +19,19 @@ public class UserWrapper implements Serializable {
     }
 
     public void setSet(HashSet<User> list) {
-        this.list=new HashSet<>(list);
+        this.list = new HashSet<>(list);
     }
 
-    public void addUser(User user)
-    {
+    public void addUser(User user) {
         list.add(user);
     }
 
-
-
-    public boolean contains(User user)
-    {
+    public boolean contains(User user) {
         return list.contains(user);
     }
 
     @Override
     public String toString() {
-        return "User container:\n"+list;
+        return "User container:\n" + list;
     }
 }

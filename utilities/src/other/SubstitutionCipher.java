@@ -1,11 +1,9 @@
 package other;
 
-//class that handles the card encryption and decryption
 public class SubstitutionCipher {
     private int shiftBy;
 
-    public SubstitutionCipher(int offset)
-    {
+    public SubstitutionCipher(int offset) {
         setShiftBy(offset);
     }
 
@@ -13,14 +11,11 @@ public class SubstitutionCipher {
         this.shiftBy = shiftBy;
     }
 
-    public void increment()
-    {
+    public void increment() {
         shiftBy++;
     }
 
-    //encrypt number string by adding shiftBy to all digits
-    public String encrypt(String plainText)
-    {
+    public String encrypt(String plainText) {
         char[] charArr = plainText.toCharArray();
         char[] encrypted = new char[charArr.length];
 
@@ -35,9 +30,7 @@ public class SubstitutionCipher {
         return new String(encrypted);
     }
 
-    //decrypt number string by removing shiftBy from all digits
-    public String decrypt(String encryptedText)
-    {
+    public String decrypt(String encryptedText) {
         char[] charArr = encryptedText.toCharArray();
         char[] decrypted = new char[charArr.length];
 

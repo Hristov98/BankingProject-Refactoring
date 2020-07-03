@@ -2,22 +2,17 @@ package wrappers;
 
 import java.io.Serializable;
 
-//a wrapper class that packages information sent between client and server during login process
-public class LoginRequest implements Serializable
-{
-    private String username;    //client's username
-    private String password;    //client's password
-    private boolean validUser;  //true if the client's username and password match those of a registered user,
-                                //will be set by the server
+public class LoginRequest implements Serializable {
+    private String username;
+    private String password;
+    private boolean validUser;
 
-    public LoginRequest()
-    {
+    public LoginRequest() {
         setUsername("");
         setPassword("");
     }
 
-    public LoginRequest(String user, String pass)
-    {
+    public LoginRequest(String user, String pass) {
         setUsername(user);
         setPassword(pass);
     }

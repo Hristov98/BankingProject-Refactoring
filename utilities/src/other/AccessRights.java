@@ -1,7 +1,6 @@
 package other;
 
-public enum AccessRights
-{
+public enum AccessRights {
     NONE("NA"),
     ENCRYPTION("E"),
     DECRYPTION("D"),
@@ -9,8 +8,7 @@ public enum AccessRights
 
     private String rights;
 
-    AccessRights(String permissions)
-    {
-        rights=permissions;
+    AccessRights(String permissions) {
+        rights = permissions;
     }
 }

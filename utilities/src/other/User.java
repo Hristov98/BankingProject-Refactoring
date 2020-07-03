@@ -2,24 +2,20 @@ package other;
 
 import java.io.Serializable;
 
-//a class that represents the data of the user
 public class User implements Serializable {
     private String username;
     private String password;
     private AccessRights permissions;
 
-    public User()
-    {
-        this("","",null);
+    public User() {
+        this("", "", null);
     }
 
-    public User(User user)
-    {
-        this(user.getUsername(),user.getPassword(),user.getPermissions());
+    public User(User user) {
+        this(user.getUsername(), user.getPassword(), user.getPermissions());
     }
 
-    public User(String user, String pass, AccessRights perm)
-    {
+    public User(String user, String pass, AccessRights perm) {
         setUsername(user);
         setPassword(pass);
         setPermissions(perm);
@@ -52,6 +48,6 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return String.format("Username: %s, Password: %s Access Rights: %s\n",
-                username,password,permissions.name());
+                username, password, permissions.name());
     }
 }
