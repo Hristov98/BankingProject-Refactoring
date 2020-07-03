@@ -1,7 +1,6 @@
 package clientApp;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -21,8 +20,8 @@ import java.util.ResourceBundle;
 public class ClientController implements Initializable {
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
-    private String chatServer;
-    private Socket client;
+    private String clientNetworkAddress;
+    private Socket clientSocket;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -31,36 +30,35 @@ public class ClientController implements Initializable {
         Thread thread = new Thread(() -> {
             try {
                 startClient();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
             }
         });
         thread.start();
     }
 
     private void connectToServer() throws IOException {
-        client = new Socket(InetAddress.getByName(chatServer), 12345);
+        clientSocket = new Socket(InetAddress.getByName(clientNetworkAddress), 12345);
     }
 
-    private void getStreams() throws IOException {
-        outputStream = new ObjectOutputStream(client.getOutputStream());
+    private void getInputAndOutputStream() throws IOException {
+        outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
         outputStream.flush();
-        inputStream = new ObjectInputStream(client.getInputStream());
+        inputStream = new ObjectInputStream(clientSocket.getInputStream());
 
-        displayMessage("Client I/O loaded successfully.");
+        displayMessage("Client Input/Output streams loaded successfully.");
     }
 
-    private void closeConnection() {
+    private void disconnectFromServer() {
         try {
-
             if (outputStream != null) {
                 outputStream.close();
             }
             if (inputStream != null) {
                 inputStream.close();
             }
-            if (client != null) {
-                client.close();
+            if (clientSocket != null) {
+                clientSocket.close();
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();
@@ -70,11 +68,11 @@ public class ClientController implements Initializable {
     private void startClient() throws IOException {
         try {
             connectToServer();
-            getStreams();
+            getInputAndOutputStream();
         } catch (EOFException eofException) {
             displayMessage("Client has terminated the connection.\n");
         } catch (IOException ioException) {
-            System.err.println("Client IOexception " + ioException.getMessage());
+            System.err.println("Client IOException " + ioException.getMessage());
             ioException.printStackTrace();
         }
     }
@@ -88,121 +86,119 @@ public class ClientController implements Initializable {
     private TabPane tabMenu;
 
     @FXML
-    private TextField txtEnterUsername;
+    private TextField username;
 
     @FXML
-    private PasswordField pwdEnterPass;
+    private PasswordField password;
 
     @FXML
     private Tab tabEncryption;
 
     @FXML
-    private TextField txtDecryptedNumber;
+    private TextField decryptedNumber;
 
     @FXML
-    private TextField txtEncryptedNumber;
+    private TextField encryptedNumber;
 
     @FXML
-    private Label lblUsername;
-
+    private Label labelLoggedInUsername;
 
     @FXML
-    void btnContinueClicked(ActionEvent event) throws IOException {
+    void clickButtonContinue() throws IOException {
         displayMessage("Sending login request from client.");
 
-        LoginRequest request = new LoginRequest(txtEnterUsername.getText(), pwdEnterPass.getText());
-        outputStream.writeObject(request);
+        LoginRequest loginRequest = new LoginRequest(username.getText(), password.getText());
+        outputStream.writeObject(loginRequest);
         outputStream.flush();
 
         try {
-            Object obj = inputStream.readObject();
+            Object object = inputStream.readObject();
 
-            if (obj instanceof LoginRequest) {
-                if (((LoginRequest) obj).isValidUser()) {
-                    lblUsername.setText(txtEnterUsername.getText());
+            if (object instanceof LoginRequest) {
+                if (((LoginRequest) object).isValidUser()) {
+                    labelLoggedInUsername.setText(username.getText());
                     tabEncryption.setDisable(false);
                     tabMenu.getTabs().remove(0);
                 } else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error window");
-                    alert.setHeaderText("You have entered an incorrect name and/or password.");
-                    alert.setContentText(" Closing connection...");
-                    alert.show();
+                    Alert failedLoginAlert = new Alert(Alert.AlertType.ERROR);
+                    failedLoginAlert.setTitle("Error window");
+                    failedLoginAlert.setHeaderText("You have entered an incorrect name and/or password.");
+                    failedLoginAlert.setContentText(" Closing connection...");
+                    failedLoginAlert.show();
 
-                    closeConnection();
+                    disconnectFromServer();
                 }
             } else System.err.println("Wrong wrapper class receiver from server.\n");
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace();
-        } catch (ClassNotFoundException cl) {
+        } catch (IOException ioException) {
+            System.err.println(ioException.getMessage());
+            ioException.printStackTrace();
+        } catch (ClassNotFoundException unknownClassException) {
             System.err.println("Unknown object received");
         }
     }
 
     @FXML
-    void btnEncryptCardNumberClicked(ActionEvent event) throws IOException {
-        displayMessage(String.format("Sending encryption request from %s.", txtEnterUsername.getText()));
+    void clickButtonEncryptCardNumber() throws IOException {
+        displayMessage(String.format("Sending encryption request from %s.", username.getText()));
 
-        EncryptionRequest encReq = new EncryptionRequest(txtDecryptedNumber.getText());
-        outputStream.writeObject(encReq);
+        EncryptionRequest encryptionRequest = new EncryptionRequest(decryptedNumber.getText());
+        outputStream.writeObject(encryptionRequest);
         outputStream.flush();
 
         try {
-            Object obj = inputStream.readObject();
+            Object object = inputStream.readObject();
 
-            if (obj instanceof EncryptionRequest) {
-                txtEncryptedNumber.setText(((EncryptionRequest) obj).getCardNumber());
+            if (object instanceof EncryptionRequest) {
+                encryptedNumber.setText(((EncryptionRequest) object).getCardNumber());
             }
-            if (obj instanceof String) {
+            if (object instanceof String) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error window");
                 alert.setHeaderText("Error during encryption.");
-                alert.setContentText((String) obj);
+                alert.setContentText((String) object);
                 alert.show();
             }
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace();
-        } catch (ClassNotFoundException cl) {
+        } catch (IOException ioException) {
+            System.err.println(ioException.getMessage());
+            ioException.printStackTrace();
+        } catch (ClassNotFoundException unknownClassException) {
             System.err.println("Unknown object received");
         }
 
     }
 
     @FXML
-    void btnDecryptCardNumberClicked(ActionEvent event) throws IOException {
-        displayMessage(String.format("Sending decryption request from %s.", txtEnterUsername.getText()));
+    void clickButtonDecryptCardNumber() throws IOException {
+        displayMessage(String.format("Sending decryption request from %s.", username.getText()));
 
-        DecryptionRequest decReq = new DecryptionRequest(txtEncryptedNumber.getText());
-        outputStream.writeObject(decReq);
+        DecryptionRequest decryptionRequest = new DecryptionRequest(encryptedNumber.getText());
+        outputStream.writeObject(decryptionRequest);
         outputStream.flush();
 
         try {
-            Object obj = inputStream.readObject();
+            Object object = inputStream.readObject();
 
-            if (obj instanceof DecryptionRequest) {
-                txtDecryptedNumber.setText(((DecryptionRequest) obj).getCardNumber());
+            if (object instanceof DecryptionRequest) {
+                decryptedNumber.setText(((DecryptionRequest) object).getCardNumber());
             }
-            if (obj instanceof String) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error window");
-                alert.setHeaderText("Error during decryption.");
-                alert.setContentText((String) obj);
-                alert.show();
+            if (object instanceof String) {
+                Alert failedLoginAlert = new Alert(Alert.AlertType.ERROR);
+                failedLoginAlert.setTitle("Error window");
+                failedLoginAlert.setHeaderText("Error during decryption.");
+                failedLoginAlert.setContentText((String) object);
+                failedLoginAlert.show();
             }
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace();
+        } catch (IOException ioException) {
+            System.err.println(ioException.getMessage());
+            ioException.printStackTrace();
         } catch (ClassNotFoundException cl) {
             System.err.println("Unknown object received");
         }
     }
 
     @FXML
-    void btnExitClicked(ActionEvent event) {
-        closeConnection();
+    void clickButtonExit() {
+        disconnectFromServer();
         Platform.exit();
     }
-
 }

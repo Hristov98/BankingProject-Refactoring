@@ -10,9 +10,9 @@ public class Client extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("client.fxml"));
+        Parent parent = FXMLLoader.load(getClass().getResource("client.fxml"));
         primaryStage.setTitle("Client interface");
-        primaryStage.setScene(new Scene(root, 600, 400));
+        primaryStage.setScene(new Scene(parent, 600, 400));
         primaryStage.show();
     }
 
