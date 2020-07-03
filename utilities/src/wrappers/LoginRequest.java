@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class LoginRequest implements Serializable {
     private String username;
     private String password;
-    private boolean isValidUser;
+    private boolean isUserValid;
 
     public LoginRequest() {
         setUsername("");
@@ -25,8 +25,8 @@ public class LoginRequest implements Serializable {
         this.username = username;
     }
 
-    public void setValidUser(boolean validUser) {
-        this.isValidUser = validUser;
+    public void setUserValid(boolean userValid) {
+        this.isUserValid = userValid;
     }
 
     public String getPassword() {
@@ -37,7 +37,7 @@ public class LoginRequest implements Serializable {
         return username;
     }
 
-    public boolean isValidUser() {
-        return isValidUser;
+    public boolean isUserValid() {
+        return isUserValid;
     }
 }

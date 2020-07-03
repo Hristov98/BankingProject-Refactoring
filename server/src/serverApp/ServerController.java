@@ -131,7 +131,7 @@ public class ServerController implements Initializable {
             outputStream.flush();
             inputStream = new ObjectInputStream(connection.getInputStream());
 
-            displayMessage("Server I/O streams loaded successfully.");
+            displayMessage("Server Input/Output streams loaded successfully.");
         }
 
         private void processConnection() throws IOException {
@@ -163,12 +163,12 @@ public class ServerController implements Initializable {
                         LoginRequest result = new LoginRequest();
                         if (userExists) {
                             displayMessage(String.format("Logging in user %s.", username));
-                            result.setValidUser(true);
+                            result.setUserValid(true);
 
                             clientName = username;
                         } else {
                             displayMessage(String.format("User %s could not be found.", username));
-                            result.setValidUser(false);
+                            result.setUserValid(false);
                         }
 
                         outputStream.writeObject(result);
