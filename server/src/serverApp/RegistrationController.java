@@ -1,6 +1,5 @@
 package serverApp;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -17,9 +16,9 @@ public class RegistrationController implements Initializable, Serializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        cmbAccessRights.getItems().removeAll(cmbAccessRights.getItems());
-        cmbAccessRights.getItems().addAll("None", "Encryption", "Decryption", "Full Access");
-        cmbAccessRights.getSelectionModel().select("None");
+        comboBoxAccessRights.getItems().removeAll(comboBoxAccessRights.getItems());
+        comboBoxAccessRights.getItems().addAll("None", "Encryption", "Decryption", "Full Access");
+        comboBoxAccessRights.getSelectionModel().select("None");
     }
 
     private UserWrapper getUsersFromFile() {
@@ -28,12 +27,12 @@ public class RegistrationController implements Initializable, Serializable {
 
         try {
             inputStream = new ObjectInputStream(new FileInputStream("users.ser"));
-        } catch (FileNotFoundException fnf) {
+        } catch (FileNotFoundException fileNotFoundException) {
             System.err.println("Error: Could not find registered user file.\n");
-            fnf.printStackTrace();
-        } catch (IOException io) {
+            fileNotFoundException.printStackTrace();
+        } catch (IOException ioException) {
             System.err.println("Error: IO exception.\n");
-            io.printStackTrace();
+            ioException.printStackTrace();
         }
 
         try {
@@ -42,20 +41,20 @@ public class RegistrationController implements Initializable, Serializable {
             if (obj instanceof UserWrapper) {
                 userWrapper = new UserWrapper(((UserWrapper) obj));
             }
-        } catch (NullPointerException n) {
+        } catch (NullPointerException nullPointerException) {
             userWrapper = new UserWrapper();
-        } catch (ClassNotFoundException cl) {
+        } catch (ClassNotFoundException unknownClassException) {
             System.err.println("Error: Could not recognise class of read object.\n");
-        } catch (IOException io) {
-            System.err.println("Error: IO exception.\n");
-            io.printStackTrace();
+        } catch (IOException ioException) {
+            System.err.println("Error: Input/Output exception.\n");
+            ioException.printStackTrace();
         }
 
         try {
             inputStream.close();
-        } catch (IOException io) {
+        } catch (IOException ioException) {
             System.err.println("Error while closing streams.");
-            io.printStackTrace();
+            ioException.printStackTrace();
         }
 
         return userWrapper;
@@ -66,73 +65,71 @@ public class RegistrationController implements Initializable, Serializable {
 
         try {
             outputStream = new ObjectOutputStream(new FileOutputStream("users.ser"));
-        } catch (IOException io) {
+        } catch (IOException ioException) {
             System.err.println("Error: Could not open file.");
-            io.printStackTrace();
+            ioException.printStackTrace();
         }
 
         try {
             outputStream.writeObject(users);
-        } catch (IOException io) {
+        } catch (IOException ioException) {
             System.err.println("Error: Could not write to file.");
-            io.printStackTrace();
+            ioException.printStackTrace();
 
         }
 
         try {
             outputStream.close();
-        } catch (IOException io) {
+        } catch (IOException ioException) {
             System.err.println("Error: Could not close output stream.");
-            io.printStackTrace();
+            ioException.printStackTrace();
         }
     }
 
     @FXML
-    private TextField txtUsername;
+    private TextField username;
 
     @FXML
-    private TextField txtPassword;
+    private TextField password;
 
     @FXML
-    private ComboBox<String> cmbAccessRights;
+    private ComboBox<String> comboBoxAccessRights;
 
     @FXML
-    void btnAddUserClicked(ActionEvent event) {
-        AccessRights access = null;
+    void clickButtonAddUser() {
+        AccessRights accessRights = null;
 
-        switch (cmbAccessRights.getValue()) {
+        switch (comboBoxAccessRights.getValue()) {
             case "None":
-                access = AccessRights.NONE;
+                accessRights = AccessRights.NONE;
                 break;
             case "Encryption":
-                access = AccessRights.ENCRYPTION;
+                accessRights = AccessRights.ENCRYPTION;
                 break;
             case "Decryption":
-                access = AccessRights.DECRYPTION;
+                accessRights = AccessRights.DECRYPTION;
                 break;
             case "Full Access":
-                access = AccessRights.FULL;
+                accessRights = AccessRights.FULL;
                 break;
         }
 
-        User newUser = new User(txtUsername.getText(), txtPassword.getText(), access);
+        User newUser = new User(username.getText(), password.getText(), accessRights);
 
-        UserWrapper wrapper;
+        UserWrapper users;
         File userFile = new File("users.ser");
-        if (userFile.exists())
-        {
-            wrapper = getUsersFromFile();
-        } else wrapper = new UserWrapper();
+        if (userFile.exists()) {
+            users = getUsersFromFile();
+        } else users = new UserWrapper();
 
-        wrapper.addUser(newUser);
-        saveUsersToFile(wrapper);
+        users.addUser(newUser);
+        saveUsersToFile(users);
 
-        cmbAccessRights.getScene().getWindow().hide();
+        comboBoxAccessRights.getScene().getWindow().hide();
     }
 
     @FXML
-    void btnCancelClicked(ActionEvent event) {
-        cmbAccessRights.getScene().getWindow().hide();
+    void clickButtonCancel() {
+        comboBoxAccessRights.getScene().getWindow().hide();
     }
-
 }
