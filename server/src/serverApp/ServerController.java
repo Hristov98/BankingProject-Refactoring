@@ -1,7 +1,6 @@
 package serverApp;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -25,19 +24,19 @@ import java.util.concurrent.Executors;
 
 public class ServerController implements Initializable {
     private ExecutorService executor;
-    private ServerSocket server;
+    private ServerSocket serverSocket;
     private UserWrapper registeredUsers;
-    private SubstitutionCipher sub;
-    private Validation verifier;
-    private StartClient client;
+    private SubstitutionCipher cipher;
+    private Validation validator;
+    private ClientRunnable clientSession;
     private BankCardFileControl cardController;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         executor = Executors.newCachedThreadPool();
-        sub = new SubstitutionCipher(5);
+        cipher = new SubstitutionCipher(5);
         cardController = new BankCardFileControl();
-        verifier = new Validation();
+        validator = new Validation();
 
         File userFile = new File("users.ser");
         File tableSortedByCard = new File("tableSortedByCard.txt");
@@ -77,13 +76,13 @@ public class ServerController implements Initializable {
         }
 
         try {
-            Object obj = inputStream.readObject();
-            if (obj instanceof UserWrapper) {
-                registeredUsers = new UserWrapper((UserWrapper) obj);
+            Object object = inputStream.readObject();
+            if (object instanceof UserWrapper) {
+                registeredUsers = new UserWrapper((UserWrapper) object);
             }
         } catch (EOFException endOfFileException) {
             System.err.println("Reached EOF.");
-        } catch (ClassNotFoundException classNotFoundException) {
+        } catch (ClassNotFoundException unknownClassException) {
             System.err.println("Unable to create object.\n");
         } catch (IOException ioException) {
             System.err.println("Error while reading from file.\n");
@@ -102,13 +101,13 @@ public class ServerController implements Initializable {
 
     public void startServer() {
         try {
-            server = new ServerSocket(12345, 100);
+            serverSocket = new ServerSocket(12345, 100);
             displayMessage("Waiting for client actions...");
 
             while (true) {
-                Socket socket = server.accept();
-                client = new StartClient(socket);
-                executor.execute(client);
+                Socket clientSocket = serverSocket.accept();
+                clientSession = new ClientRunnable(clientSocket);
+                executor.execute(clientSession);
             }
 
         } catch (IOException ioException) {
@@ -116,13 +115,13 @@ public class ServerController implements Initializable {
         }
     }
 
-    public class StartClient implements Runnable {
+    public class ClientRunnable implements Runnable {
         private ObjectOutputStream outputStream;
         private ObjectInputStream inputStream;
         private String clientName;
         private final Socket connection;
 
-        StartClient(Socket connect) {
+        ClientRunnable(Socket connect) {
             connection = connect;
             clientName = "guest";
         }
@@ -140,21 +139,21 @@ public class ServerController implements Initializable {
 
             while (true) {
                 try {
-                    Object obj = inputStream.readObject();
+                    Object object = inputStream.readObject();
 
-                    if (obj instanceof String) {
-                        displayMessage((String) obj);
+                    if (object instanceof String) {
+                        displayMessage((String) object);
                     }
-                    if (obj instanceof LoginRequest) {
-                        String username = ((LoginRequest) obj).getUsername();
-                        String password = ((LoginRequest) obj).getPassword();
+                    if (object instanceof LoginRequest) {
+                        String username = ((LoginRequest) object).getUsername();
+                        String password = ((LoginRequest) object).getPassword();
 
                         boolean userExists = false;
                         HashSet<User> users = registeredUsers.getSet();
-                        Iterator<User> it = users.iterator();
+                        Iterator<User> iterator = users.iterator();
 
-                        while (it.hasNext()) {
-                            User user = it.next();
+                        while (iterator.hasNext()) {
+                            User user = iterator.next();
                             if (username.equals(user.getUsername()) && password.equals(user.getPassword())) {
                                 userExists = true;
                                 break;
@@ -175,24 +174,24 @@ public class ServerController implements Initializable {
                         outputStream.writeObject(result);
                         outputStream.flush();
                     }
-                    if (obj instanceof EncryptionRequest) {
-                        String cardNumber = ((EncryptionRequest) obj).getCardNumber()
+                    if (object instanceof EncryptionRequest) {
+                        String cardNumber = ((EncryptionRequest) object).getCardNumber()
                                 .replaceAll(" ", "");
 
-                        if (verifier.validationByLuhn(cardNumber) && verifier.validationByRegexDecrypted(cardNumber)) {
+                        if (validator.validationByLuhn(cardNumber) && validator.validationByRegexDecrypted(cardNumber)) {
                             displayMessage(String.format("%s is a valid card.", cardNumber));
 
                             boolean hasRights = getUserRightsByMethod(clientName, AccessRights.ENCRYPTION);
 
                             if (hasRights) {
-                                String encrypted = sub.encrypt(cardNumber);
+                                String encryptedNumber = cipher.encrypt(cardNumber);
                                 displayMessage(String.format("Sending %s back to user %s"
-                                        , encrypted, clientName));
+                                        , encryptedNumber, clientName));
 
-                                EncryptionRequest result = new EncryptionRequest(encrypted);
+                                EncryptionRequest result = new EncryptionRequest(encryptedNumber);
                                 outputStream.writeObject(result);
 
-                                cardController.addCard(cardNumber, encrypted);
+                                cardController.addCard(cardNumber, encryptedNumber);
                                 cardController.saveSortByCardToFile();
                                 cardController.saveSortByEncryptionToFile();
                             } else {
@@ -206,24 +205,24 @@ public class ServerController implements Initializable {
                         }
                         outputStream.flush();
                     }
-                    if (obj instanceof DecryptionRequest) {
-                        String encryptedNumber = ((DecryptionRequest) obj).getCardNumber()
+                    if (object instanceof DecryptionRequest) {
+                        String encryptedNumber = ((DecryptionRequest) object).getCardNumber()
                                 .replaceAll(" ", "");
 
-                        if (verifier.validationByRegexEncrypted(encryptedNumber)) {
+                        if (validator.validationByRegexEncrypted(encryptedNumber)) {
                             displayMessage(String.format("%s is a valid card", encryptedNumber));
 
                             boolean hasRights = getUserRightsByMethod(clientName, AccessRights.DECRYPTION);
 
                             if (hasRights) {
-                                String decrypted = sub.decrypt(encryptedNumber);
+                                String decryptedNumber = cipher.decrypt(encryptedNumber);
                                 displayMessage(String.format("Sending %s back to user %s"
-                                        , decrypted, clientName));
+                                        , decryptedNumber, clientName));
 
-                                DecryptionRequest result = new DecryptionRequest(decrypted);
+                                DecryptionRequest result = new DecryptionRequest(decryptedNumber);
                                 outputStream.writeObject(result);
 
-                                cardController.addCard(decrypted, encryptedNumber);
+                                cardController.addCard(decryptedNumber, encryptedNumber);
                                 cardController.saveSortByCardToFile();
                                 cardController.saveSortByEncryptionToFile();
                             } else {
@@ -238,7 +237,7 @@ public class ServerController implements Initializable {
                         }
                         outputStream.flush();
                     }
-                } catch (ClassNotFoundException classNotFoundException) {
+                } catch (ClassNotFoundException unknownClassException) {
                     displayMessage("Unknown object type received.");
                 }
             }
@@ -247,10 +246,10 @@ public class ServerController implements Initializable {
         private boolean getUserRightsByMethod(String username, AccessRights rights) {
             boolean hasRights = false;
             HashSet<User> users = registeredUsers.getSet();
-            Iterator<User> it = users.iterator();
+            Iterator<User> iterator = users.iterator();
 
-            while (it.hasNext()) {
-                User user = it.next();
+            while (iterator.hasNext()) {
+                User user = iterator.next();
                 if (username.equals(user.getUsername())) {
                     if (user.getPermissions().equals(rights)
                             || user.getPermissions().equals(AccessRights.FULL)) {
@@ -271,8 +270,6 @@ public class ServerController implements Initializable {
                 if (outputStream != null) {
                     outputStream.close();
                 }
-                if (outputStream != null) {
-                }
                 if (inputStream != null) {
                     inputStream.close();
                 }
@@ -292,7 +289,7 @@ public class ServerController implements Initializable {
             try {
                 getStreams();
                 processConnection();
-            } catch (IOException eofException) {
+            } catch (IOException ioException) {
                 displayMessage(String.format("%s has terminated the connection.", clientName));
             } finally {
                 closeConnection();
@@ -304,47 +301,47 @@ public class ServerController implements Initializable {
         String timeStampedMessage = String.format("%s\t%s\n",
                 new SimpleDateFormat("HH:mm:ss").format(new Date()), message);
 
-        Platform.runLater(() -> txaLog.appendText(timeStampedMessage));
+        Platform.runLater(() -> textAreaLog.appendText(timeStampedMessage));
     }
 
     @FXML
-    private TextArea txaLog;
+    private TextArea textAreaLog;
 
     @FXML
-    void btnExitClicked(ActionEvent event) {
+    void clickButtonExit() {
         Platform.exit();
         executor.shutdown();
         System.exit(0);
     }
 
     @FXML
-    void btnRegisterUserClicked(ActionEvent event) throws IOException {
+    void clickButtonRegisterUser() throws IOException {
         displayMessage("Adding new user.");
 
         Stage secondaryStage = new Stage();
-        Parent root = FXMLLoader.load(getClass().getResource("registration.fxml"));
+        Parent parent = FXMLLoader.load(getClass().getResource("registration.fxml"));
         secondaryStage.setTitle("Registration menu");
-        secondaryStage.setScene(new Scene(root, 500, 250));
+        secondaryStage.setScene(new Scene(parent, 500, 250));
         secondaryStage.show();
     }
 
     @FXML
-    void btnClearLogClicked(ActionEvent event) {
-        txaLog.setText("");
+    void clickButtonClearLog() {
+        textAreaLog.setText("");
     }
 
     @FXML
-    void btnUpdateAndDisplayUsersClicked(ActionEvent event) {
+    void clickButtonUpdateAndDisplayUsers() {
         try {
             registeredUsers = loadUsers();
             displayMessage(registeredUsers.toString());
-        } catch (NullPointerException npe) {
+        } catch (NullPointerException nullPointerException) {
             System.err.println("Error: Could not find file to update.");
         }
     }
 
     @FXML
-    void btnViewSortedByEncClicked(ActionEvent event) {
+    void clickButtonViewCardsSortedByEncryption() {
         TreeMap<String, String> table = cardController.readSortByEncryptionFromFile();
         cardController.setCardTableSortedByEncryptedNumber(table);
 
@@ -354,8 +351,7 @@ public class ServerController implements Initializable {
     }
 
     @FXML
-    void btnViewSortedByNumClicked(ActionEvent event) {
-
+    void clickButtonViewCardsSortedByNumber() {
         TreeMap<String, String> table = cardController.readSortByCardFromFile();
         cardController.setCardTableSortedByCardNumber(table);
 

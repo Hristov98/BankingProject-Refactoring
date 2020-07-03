@@ -11,64 +11,80 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane fx:id="gridMain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="408.0" prefWidth="668.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientApp.ClientController">
+<GridPane fx:id="gridMain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+          prefHeight="408.0" prefWidth="668.0" xmlns="http://javafx.com/javafx/8.0.171"
+          xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientApp.ClientController">
     <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="382.0" minWidth="10.0" prefWidth="335.0" />
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.0" minWidth="10.0" prefWidth="335.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="382.0" minWidth="10.0" prefWidth="335.0"/>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.0" minWidth="10.0" prefWidth="335.0"/>
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints maxHeight="104.0" minHeight="8.0" prefHeight="50.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="226.0" minHeight="10.0" prefHeight="101.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="181.0" minHeight="10.0" prefHeight="112.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="129.0" minHeight="10.0" prefHeight="81.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="104.0" minHeight="8.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="226.0" minHeight="10.0" prefHeight="101.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="194.0" minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="181.0" minHeight="10.0" prefHeight="112.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="129.0" minHeight="10.0" prefHeight="81.0" vgrow="SOMETIMES"/>
     </rowConstraints>
     <children>
-        <Button fx:id="buttonExit" mnemonicParsing="false" onAction="#clickButtonExit" prefHeight="86.0" prefWidth="150.0" text="Exit" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+        <Button fx:id="buttonExit" mnemonicParsing="false" onAction="#clickButtonExit" prefHeight="86.0"
+                prefWidth="150.0" text="Exit" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER"
+                GridPane.rowIndex="4" GridPane.valignment="CENTER">
             <GridPane.margin>
-                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
             </GridPane.margin>
         </Button>
-        <TabPane fx:id="tabMenu" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnSpan="2147483647" GridPane.rowSpan="4">
+        <TabPane fx:id="tabMenu" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE"
+                 GridPane.columnSpan="2147483647" GridPane.rowSpan="4">
             <tabs>
                 <Tab fx:id="tabLogin" text="System Login">
                     <content>
                         <GridPane fx:id="gridLogin">
                             <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="381.0" minWidth="10.0" prefWidth="334.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="411.0" minWidth="10.0" prefWidth="334.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="381.0" minWidth="10.0"
+                                                   prefWidth="334.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="411.0" minWidth="10.0"
+                                                   prefWidth="334.0"/>
                             </columnConstraints>
                             <rowConstraints>
-                                <RowConstraints maxHeight="63.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
-                                <RowConstraints maxHeight="76.0" minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="10.0" prefHeight="79.0" vgrow="SOMETIMES" />
-                                <RowConstraints />
+                                <RowConstraints maxHeight="63.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES"/>
+                                <RowConstraints maxHeight="76.0" minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" prefHeight="79.0" vgrow="SOMETIMES"/>
+                                <RowConstraints/>
                             </rowConstraints>
                             <children>
-                                <TextField fx:id="username" prefHeight="56.0" prefWidth="287.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
+                                <TextField fx:id="username" prefHeight="56.0" prefWidth="287.0" GridPane.columnIndex="1"
+                                           GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
                                     <GridPane.margin>
-                                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
                                     </GridPane.margin>
                                 </TextField>
-                                <Button fx:id="buttonContinue" mnemonicParsing="false" onAction="#clickButtonContinue" prefHeight="49.0" prefWidth="146.0" text="Continue" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                <Button fx:id="buttonContinue" mnemonicParsing="false" onAction="#clickButtonContinue"
+                                        prefHeight="49.0" prefWidth="146.0" text="Continue"
+                                        GridPane.columnSpan="2147483647" GridPane.halignment="CENTER"
+                                        GridPane.rowIndex="3" GridPane.valignment="CENTER">
                                     <GridPane.margin>
-                                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
                                     </GridPane.margin>
                                 </Button>
-                                <Label fx:id="labelPassword" text="Enter password:" GridPane.halignment="LEFT" GridPane.rowIndex="2">
+                                <Label fx:id="labelPassword" text="Enter password:" GridPane.halignment="LEFT"
+                                       GridPane.rowIndex="2">
                                     <GridPane.margin>
-                                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0"/>
                                     </GridPane.margin>
                                 </Label>
-                                <Label fx:id="labelUsername" text="Enter username:" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+                                <Label fx:id="labelUsername" text="Enter username:" GridPane.halignment="LEFT"
+                                       GridPane.rowIndex="1">
                                     <GridPane.margin>
-                                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0"/>
                                     </GridPane.margin>
                                 </Label>
-                                <Label fx:id="labelGreeting" text="Welcome! Please enter your account information to gain access to the server." GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                <Label fx:id="labelGreeting"
+                                       text="Welcome! Please enter your account information to gain access to the server."
+                                       GridPane.columnSpan="2147483647" GridPane.halignment="CENTER"
+                                       GridPane.valignment="CENTER"/>
                                 <PasswordField fx:id="password" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                     <GridPane.margin>
-                                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
                                     </GridPane.margin>
                                 </PasswordField>
                             </children>
@@ -79,49 +95,58 @@
                     <content>
                         <GridPane fx:id="gridEncryption">
                             <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="479.0" minWidth="0.0" prefWidth="292.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="350.0" minWidth="0.0" prefWidth="300.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="479.0" minWidth="0.0" prefWidth="292.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="350.0" minWidth="0.0" prefWidth="300.0"/>
                             </columnConstraints>
                             <rowConstraints>
-                                <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
-                                <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
-                                <RowConstraints maxHeight="79.0" minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
-                                <RowConstraints maxHeight="132.0" minHeight="10.0" prefHeight="76.0" vgrow="SOMETIMES" />
-                                <RowConstraints maxHeight="169.0" minHeight="82.0" prefHeight="90.0" />
+                                <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES"/>
+                                <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES"/>
+                                <RowConstraints maxHeight="79.0" minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES"/>
+                                <RowConstraints maxHeight="132.0" minHeight="10.0" prefHeight="76.0" vgrow="SOMETIMES"/>
+                                <RowConstraints maxHeight="169.0" minHeight="82.0" prefHeight="90.0"/>
                             </rowConstraints>
                             <children>
                                 <TextField fx:id="decryptedNumber" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                     <GridPane.margin>
-                                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0"/>
                                     </GridPane.margin>
                                 </TextField>
-                                <Button fx:id="buttonDecryptCardNumber" mnemonicParsing="false" onAction="#clickButtonDecryptCardNumber" prefHeight="135.0" prefWidth="150.0" text="Decrypt" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                                <Button fx:id="buttonDecryptCardNumber" mnemonicParsing="false"
+                                        onAction="#clickButtonDecryptCardNumber" prefHeight="135.0" prefWidth="150.0"
+                                        text="Decrypt" GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                                        GridPane.rowIndex="4">
                                     <GridPane.margin>
-                                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
                                     </GridPane.margin>
                                 </Button>
-                                <Button fx:id="buttonEncryptCardNumber" mnemonicParsing="false" onAction="#clickButtonEncryptCardNumber" prefHeight="107.0" prefWidth="150.0" text="Encrypt" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                                <Button fx:id="buttonEncryptCardNumber" mnemonicParsing="false"
+                                        onAction="#clickButtonEncryptCardNumber" prefHeight="107.0" prefWidth="150.0"
+                                        text="Encrypt" GridPane.halignment="CENTER" GridPane.rowIndex="4">
                                     <GridPane.margin>
-                                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
                                     </GridPane.margin>
                                 </Button>
-                                <Label fx:id="labelEncryptedNumber" prefHeight="74.0" prefWidth="278.0" text="Encrypted bank card number:" GridPane.rowIndex="3">
+                                <Label fx:id="labelEncryptedNumber" prefHeight="74.0" prefWidth="278.0"
+                                       text="Encrypted bank card number:" GridPane.rowIndex="3">
                                     <GridPane.margin>
-                                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0"/>
                                     </GridPane.margin>
                                 </Label>
-                                <Label fx:id="labelDecryptedNumber" prefHeight="74.0" prefWidth="341.0" text="Decrypted bank card number:" GridPane.rowIndex="2">
+                                <Label fx:id="labelDecryptedNumber" prefHeight="74.0" prefWidth="341.0"
+                                       text="Decrypted bank card number:" GridPane.rowIndex="2">
                                     <GridPane.margin>
-                                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0"/>
                                     </GridPane.margin>
                                 </Label>
                                 <TextField fx:id="encryptedNumber" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                     <GridPane.margin>
-                                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0"/>
                                     </GridPane.margin>
                                 </TextField>
-                                <Label fx:id="labelSuccess" text="Login Successful! You have logged in as: " GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" />
-                                <Label fx:id="labelLoggedInUsername" text="username" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                                <Label fx:id="labelSuccess" text="Login Successful! You have logged in as: "
+                                       GridPane.columnSpan="2147483647" GridPane.halignment="CENTER"/>
+                                <Label fx:id="labelLoggedInUsername" text="username" GridPane.columnSpan="2147483647"
+                                       GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
                             </children>
                         </GridPane>
                     </content>

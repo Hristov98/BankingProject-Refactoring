@@ -10,9 +10,9 @@ public class Server extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("server.fxml"));
+        Parent parent = FXMLLoader.load(getClass().getResource("server.fxml"));
         primaryStage.setTitle("Server interface");
-        primaryStage.setScene(new Scene(root, 800, 450));
+        primaryStage.setScene(new Scene(parent, 800, 450));
         primaryStage.show();
     }
 
