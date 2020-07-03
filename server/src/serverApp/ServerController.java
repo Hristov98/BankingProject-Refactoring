@@ -29,13 +29,13 @@ public class ServerController implements Initializable {
     private SubstitutionCipher cipher;
     private Validation validator;
     private ClientRunnable clientSession;
-    private BankCardFileControl cardController;
+    private BankCardTableController cardController;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         executor = Executors.newCachedThreadPool();
         cipher = new SubstitutionCipher(5);
-        cardController = new BankCardFileControl();
+        cardController = new BankCardTableController();
         validator = new Validation();
 
         File userFile = new File("users.ser");
@@ -149,7 +149,7 @@ public class ServerController implements Initializable {
                         String password = ((LoginRequest) object).getPassword();
 
                         boolean userExists = false;
-                        HashSet<User> users = registeredUsers.getSet();
+                        HashSet<User> users = registeredUsers.getUsers();
                         Iterator<User> iterator = users.iterator();
 
                         while (iterator.hasNext()) {
@@ -245,7 +245,7 @@ public class ServerController implements Initializable {
 
         private boolean getUserRightsByMethod(String username, AccessRights rights) {
             boolean hasRights = false;
-            HashSet<User> users = registeredUsers.getSet();
+            HashSet<User> users = registeredUsers.getUsers();
             Iterator<User> iterator = users.iterator();
 
             while (iterator.hasNext()) {

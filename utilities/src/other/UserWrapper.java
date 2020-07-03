@@ -4,34 +4,34 @@ import java.io.Serializable;
 import java.util.HashSet;
 
 public class UserWrapper implements Serializable {
-    private HashSet<User> list;
+    private HashSet<User> users;
 
     public UserWrapper() {
-        list = new HashSet<>();
+        users = new HashSet<>();
     }
 
-    public UserWrapper(UserWrapper uw) {
-        setSet(uw.getSet());
+    public UserWrapper(UserWrapper userWrapper) {
+        setUsers(userWrapper.getUsers());
     }
 
-    public HashSet<User> getSet() {
-        return new HashSet<>(list);
+    public HashSet<User> getUsers() {
+        return new HashSet<>(users);
     }
 
-    public void setSet(HashSet<User> list) {
-        this.list = new HashSet<>(list);
+    public void setUsers(HashSet<User> users) {
+        this.users = new HashSet<>(users);
     }
 
     public void addUser(User user) {
-        list.add(user);
+        users.add(user);
     }
 
     public boolean contains(User user) {
-        return list.contains(user);
+        return users.contains(user);
     }
 
     @Override
     public String toString() {
-        return "User container:\n" + list;
+        return "User container:\n" + users;
     }
 }

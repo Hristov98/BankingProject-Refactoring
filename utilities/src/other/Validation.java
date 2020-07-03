@@ -10,14 +10,14 @@ public class Validation {
     }
 
     public boolean validationByLuhn(String cardNumber) {
-        char[] charArr = cardNumber.toCharArray();
-        int length = cardNumber.length();
-        int parity = length % 2;
+        char[] cardNumberDigits = cardNumber.toCharArray();
+        int cardLength = cardNumber.length();
+        int parity = cardLength % 2;
         int digitSum = 0;
         int currentDigit;
 
-        for (int i = length - 1; i >= 0; i--) {
-            currentDigit = (int) charArr[i] - '0';
+        for (int i = cardLength - 1; i >= 0; i--) {
+            currentDigit = (int) cardNumberDigits[i] - '0';
 
             if (i % 2 == parity) {
                 currentDigit *= 2;

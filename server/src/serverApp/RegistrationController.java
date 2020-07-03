@@ -36,10 +36,10 @@ public class RegistrationController implements Initializable, Serializable {
         }
 
         try {
-            Object obj = inputStream.readObject();
+            Object object = inputStream.readObject();
 
-            if (obj instanceof UserWrapper) {
-                userWrapper = new UserWrapper(((UserWrapper) obj));
+            if (object instanceof UserWrapper) {
+                userWrapper = new UserWrapper(((UserWrapper) object));
             }
         } catch (NullPointerException nullPointerException) {
             userWrapper = new UserWrapper();

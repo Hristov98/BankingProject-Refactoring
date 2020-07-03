@@ -1,47 +1,47 @@
 package other;
 
 public class SubstitutionCipher {
-    private int shiftBy;
+    private int cipherKey;
 
     public SubstitutionCipher(int offset) {
-        setShiftBy(offset);
+        setCipherKey(offset);
     }
 
-    public void setShiftBy(int shiftBy) {
-        this.shiftBy = shiftBy;
+    public void setCipherKey(int cipherKey) {
+        this.cipherKey = cipherKey;
     }
 
     public void increment() {
-        shiftBy++;
+        cipherKey++;
     }
 
     public String encrypt(String plainText) {
-        char[] charArr = plainText.toCharArray();
-        char[] encrypted = new char[charArr.length];
+        char[] plainTextArray = plainText.toCharArray();
+        char[] encryptedText = new char[plainTextArray.length];
 
-        for (int i = 0; i < encrypted.length; i++) {
-            if ((int) charArr[i] - '0' + shiftBy > 9) {
-                encrypted[i] = (char) ((int) charArr[i] + shiftBy - 10);
+        for (int i = 0; i < encryptedText.length; i++) {
+            if ((int) plainTextArray[i] - '0' + cipherKey > 9) {
+                encryptedText[i] = (char) ((int) plainTextArray[i] + cipherKey - 10);
             } else {
-                encrypted[i] = (char) (charArr[i] + shiftBy);
+                encryptedText[i] = (char) (plainTextArray[i] + cipherKey);
             }
         }
 
-        return new String(encrypted);
+        return new String(encryptedText);
     }
 
     public String decrypt(String encryptedText) {
-        char[] charArr = encryptedText.toCharArray();
-        char[] decrypted = new char[charArr.length];
+        char[] encryptedTextArray = encryptedText.toCharArray();
+        char[] decryptedText = new char[encryptedTextArray.length];
 
-        for (int i = 0; i < decrypted.length; i++) {
-            if ((int) charArr[i] - '0' - shiftBy < 0) {
-                decrypted[i] = (char) ((int) charArr[i] - shiftBy + 10);
+        for (int i = 0; i < decryptedText.length; i++) {
+            if ((int) encryptedTextArray[i] - '0' - cipherKey < 0) {
+                decryptedText[i] = (char) ((int) encryptedTextArray[i] - cipherKey + 10);
             } else {
-                decrypted[i] = (char) (charArr[i] - shiftBy);
+                decryptedText[i] = (char) (encryptedTextArray[i] - cipherKey);
             }
         }
 
-        return new String(decrypted);
+        return new String(decryptedText);
     }
 }

@@ -8,16 +8,16 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
-public class BankCardFileControl {
+public class BankCardTableController {
     private TreeMap<String, String> cardTableSortedByCardNumber;
     private TreeMap<String, String> cardTableSortedByEncryptedNumber;
 
-    public BankCardFileControl() {
+    public BankCardTableController() {
         cardTableSortedByCardNumber = new TreeMap<>();
         cardTableSortedByEncryptedNumber = new TreeMap<>();
     }
 
-    public BankCardFileControl(TreeMap<String, String> cards) {
+    public BankCardTableController(TreeMap<String, String> cards) {
         setCardTableSortedByCardNumber(cards);
         setCardTableSortedByEncryptedNumber(cards);
     }
@@ -44,40 +44,40 @@ public class BankCardFileControl {
     }
 
     public String toStringSortedByCard() {
-        StringBuilder table = new StringBuilder();
+        StringBuilder cardNumbersAsText = new StringBuilder();
         for (Map.Entry<String, String> pair : cardTableSortedByCardNumber.entrySet()) {
-            table.append(String.format("%s %s\n", pair.getKey(), pair.getValue()));
+            cardNumbersAsText.append(String.format("%s %s\n", pair.getKey(), pair.getValue()));
         }
 
-        return table.toString();
+        return cardNumbersAsText.toString();
     }
 
     public String toStringSortedByEncryption() {
-        StringBuilder table = new StringBuilder();
+        StringBuilder cardNumbersAsText = new StringBuilder();
 
         for (Map.Entry<String, String> pair : cardTableSortedByEncryptedNumber.entrySet()) {
-            table.append(String.format("%s %s\n", pair.getValue(), pair.getKey()));
+            cardNumbersAsText.append(String.format("%s %s\n", pair.getValue(), pair.getKey()));
         }
 
-        return table.toString();
+        return cardNumbersAsText.toString();
     }
 
     public void saveSortByCardToFile() {
-        File table = new File("tableSortedByCard.txt");
+        File tableFile = new File("tableSortedByCard.txt");
         Formatter formatter = null;
 
-        if (!table.exists()) {
+        if (!tableFile.exists()) {
             try {
-                table.createNewFile();
-            } catch (IOException e) {
+                tableFile.createNewFile();
+            } catch (IOException ioException) {
                 System.err.println("Error: Could not create new file tableSortedByCard.txt");
-                e.printStackTrace();
+                ioException.printStackTrace();
             }
         }
 
         try {
             formatter = new Formatter("tableSortedByCard.txt");
-        } catch (FileNotFoundException foundNotFound) {
+        } catch (FileNotFoundException fileNotFoundException) {
             System.err.println("Error: File tableSortedByCard.txt could not be found.");
         }
 
@@ -89,12 +89,12 @@ public class BankCardFileControl {
     }
 
     public TreeMap<String, String> readSortByCardFromFile() {
-        File table = new File("tableSortedByCard.txt");
+        File tableFile = new File("tableSortedByCard.txt");
         Scanner scanner = null;
         TreeMap<String, String> cardsFromFile = new TreeMap<>();
 
         try {
-            scanner = new Scanner(table);
+            scanner = new Scanner(tableFile);
 
             while (scanner.hasNext()) {
                 cardsFromFile.put(scanner.next(), scanner.next());
@@ -111,21 +111,21 @@ public class BankCardFileControl {
     }
 
     public void saveSortByEncryptionToFile() {
-        File table = new File("tableSortedByEncryption.txt");
+        File tableFile = new File("tableSortedByEncryption.txt");
         Formatter formatter = null;
 
-        if (!table.exists()) {
+        if (!tableFile.exists()) {
             try {
-                table.createNewFile();
-            } catch (IOException e) {
+                tableFile.createNewFile();
+            } catch (IOException ioException) {
                 System.err.println("Error: Could not create new file tableSortedByEncryption.txt");
-                e.printStackTrace();
+                ioException.printStackTrace();
             }
         }
 
         try {
             formatter = new Formatter("tableSortedByEncryption.txt");
-        } catch (FileNotFoundException foundNotFound) {
+        } catch (FileNotFoundException fileNotFoundException) {
             System.err.println("Error: File tableSortedByEncryption.txt could not be found.");
         }
 
@@ -137,12 +137,12 @@ public class BankCardFileControl {
     }
 
     public TreeMap<String, String> readSortByEncryptionFromFile() {
-        File table = new File("tableSortedByEncryption.txt");
+        File tableFile = new File("tableSortedByEncryption.txt");
         Scanner scanner = null;
         TreeMap<String, String> cardsFromFile = new TreeMap<>();
 
         try {
-            scanner = new Scanner(table);
+            scanner = new Scanner(tableFile);
 
             while (scanner.hasNext()) {
                 String cardNumber = scanner.next();
