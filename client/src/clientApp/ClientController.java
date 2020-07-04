@@ -1,6 +1,9 @@
 package clientApp;
 
-import communication.*;
+import communicationHandlers.ActionHandler;
+import communicationHandlers.DecryptionHandler;
+import communicationHandlers.EncryptionHandler;
+import communicationHandlers.LoginHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,10 +19,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ClientController implements Initializable {
-    private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
+    private ObjectOutputStream outputStream;
     private String clientNetworkAddress;
     private Socket clientSocket;
+    private MessageLogger logger;
 
     @FXML
     private TabPane tabMenu;
@@ -69,9 +73,10 @@ public class ClientController implements Initializable {
             connectToServer();
             setInputStream();
             setOutputStream();
-            displayMessage("Client Input/Output streams loaded successfully.");
+            initialiseMessageLogger();
+            logger.displayMessageOnServer("Client Input/Output streams loaded successfully.");
         } catch (EOFException eofException) {
-            displayMessage("Client has terminated the connection.\n");
+            logger.displayMessageOnServer("Client has terminated the connection.\n");
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
@@ -90,69 +95,21 @@ public class ClientController implements Initializable {
         outputStream.flush();
     }
 
-    private void displayMessage(String message) {
-        try {
-            sendMessageToServer(message);
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-        }
-    }
-
-    private void sendMessageToServer(String message) throws IOException {
-        outputStream.writeObject(message);
-        outputStream.flush();
+    private void initialiseMessageLogger() {
+        logger = new MessageLogger(outputStream);
     }
 
     @FXML
     void clickButtonContinue() throws IOException {
-        displayMessage("Sending login request from client to server.");
-        sendLoginRequestToServer();
-        processResponseToLoginRequest();
-    }
+        logger.displayMessageOnServer("Sending login request from client to server.");
 
-    private void sendLoginRequestToServer() throws IOException {
-        Request loginRequest = new LoginRequest(username.getText(), password.getText());
-        sendToServer(loginRequest);
-    }
+        ActionHandler loginHandler = new LoginHandler(username.getText(), password.getText());
+        loginHandler.sendRequestToServer(outputStream);
+        boolean isLoginResponseValid = loginHandler.processResponseFromServer(inputStream, logger);
 
-    private void sendToServer(Request request) throws IOException {
-        outputStream.writeObject(request);
-        outputStream.flush();
-    }
-
-    private void processResponseToLoginRequest() {
-        try {
-            Response response = getResponseFromServer();
-            processReceivedLoginObject(response);
-        } catch (IOException ioException) {
-            displayMessage("Input/Output error during client login.");
-            ioException.printStackTrace();
-        } catch (ClassNotFoundException unknownClassException) {
-            displayMessage("Unknown object received during client login.");
-            unknownClassException.printStackTrace();
+        if (isLoginResponseValid) {
+            logInUser();
         }
-    }
-
-    private Response getResponseFromServer() throws IOException, ClassNotFoundException {
-        return (Response) inputStream.readObject();
-    }
-
-    private void processReceivedLoginObject(Response response) {
-        if (isCorrectResponseType(response, RequestType.LOGIN)) {
-            if (isSuccessfulResponse(response)) {
-                logInUser();
-            } else {
-                alertUserForFailedAction(response.getReturnedMessage());
-            }
-        } else System.err.println("Wrong wrapper class receiver from server.\n");
-    }
-
-    private boolean isCorrectResponseType(Response response, RequestType type) {
-        return response.getType() == type;
-    }
-
-    private boolean isSuccessfulResponse(Response response) {
-        return response.getStatus() == ResponseStatus.SUCCESS;
     }
 
     private void logInUser() {
@@ -169,11 +126,44 @@ public class ClientController implements Initializable {
         tabMenu.getTabs().remove(0);
     }
 
-    private void alertUserForFailedAction(String failureMessage) {
-        Alert failedLoginAlert = new Alert(Alert.AlertType.ERROR);
-        failedLoginAlert.setTitle("Error window");
-        failedLoginAlert.setHeaderText(failureMessage);
-        failedLoginAlert.show();
+    @FXML
+    void clickButtonEncryptCardNumber() throws IOException {
+        logger.displayMessageOnServer(String.format("Sending encryption request from %s.", username.getText()));
+
+        ActionHandler encryptionHandler = new EncryptionHandler(decryptedNumber.getText());
+        encryptionHandler.sendRequestToServer(outputStream);
+        boolean isEncryptionResponseValid = encryptionHandler.processResponseFromServer(inputStream, logger);
+
+        if (isEncryptionResponseValid) {
+            setEncryptedCardNumber(encryptionHandler.getResponseMessage());
+        }
+    }
+
+    private void setEncryptedCardNumber(String cardNumber) {
+        encryptedNumber.setText(cardNumber);
+    }
+
+    @FXML
+    void clickButtonDecryptCardNumber() throws IOException {
+        logger.displayMessageOnServer(String.format("Sending decryption request from %s.", username.getText()));
+
+        ActionHandler decryptionHandler = new DecryptionHandler(encryptedNumber.getText());
+        decryptionHandler.sendRequestToServer(outputStream);
+        boolean isDecryptionResponseValid = decryptionHandler.processResponseFromServer(inputStream,logger);
+
+        if (isDecryptionResponseValid) {
+            setDecryptedCardNumber(decryptionHandler.getResponseMessage());
+        }
+    }
+
+    private void setDecryptedCardNumber(String cardNumber) {
+        decryptedNumber.setText(cardNumber);
+    }
+
+    @FXML
+    void clickButtonExit() {
+        disconnectFromServer();
+        closeUserInterface();
     }
 
     private void disconnectFromServer() {
@@ -202,86 +192,6 @@ public class ClientController implements Initializable {
         if (clientSocket != null) {
             clientSocket.close();
         }
-    }
-
-    @FXML
-    void clickButtonEncryptCardNumber() throws IOException {
-        displayMessage(String.format("Sending encryption request from %s.", username.getText()));
-        sendEncryptionRequestToServer();
-        processResponseToEncryptionRequest();
-    }
-
-    private void sendEncryptionRequestToServer() throws IOException {
-        EncryptionRequest encryptionRequest = new EncryptionRequest(decryptedNumber.getText());
-        outputStream.writeObject(encryptionRequest);
-        outputStream.flush();
-    }
-
-    private void processResponseToEncryptionRequest() {
-        try {
-            Response response = getResponseFromServer();
-            processReceivedEncryptionObject(response);
-        } catch (IOException ioException) {
-            displayMessage("Input/Output error during card encryption.");
-            ioException.printStackTrace();
-        } catch (ClassNotFoundException unknownClassException) {
-            displayMessage("Unknown object received during card encryption.");
-        }
-    }
-
-    private void processReceivedEncryptionObject(Response response) {
-        if (isCorrectResponseType(response,RequestType.ENCRYPTION) && isSuccessfulResponse(response)) {
-            getEncryptedCardNumberFromServer(response);
-        } else {
-            alertUserForFailedAction(response.getReturnedMessage());
-        }
-    }
-
-    private void getEncryptedCardNumberFromServer(Response response) {
-        encryptedNumber.setText(response.getReturnedMessage());
-    }
-
-    @FXML
-    void clickButtonDecryptCardNumber() throws IOException {
-        displayMessage(String.format("Sending decryption request from %s.", username.getText()));
-        sendDecryptionRequestToServer();
-        processResponseToDecryptionRequest();
-    }
-
-    private void sendDecryptionRequestToServer() throws IOException {
-        DecryptionRequest decryptionRequest = new DecryptionRequest(encryptedNumber.getText());
-        outputStream.writeObject(decryptionRequest);
-        outputStream.flush();
-    }
-
-    private void processResponseToDecryptionRequest() {
-        try {
-            Response response = getResponseFromServer();
-            processReceiverDecryptionObject(response);
-        } catch (IOException ioException) {
-            displayMessage("Input/Output error during card decryption.");
-            ioException.printStackTrace();
-        } catch (ClassNotFoundException unknownClassException) {
-            displayMessage("Unknown object received during card decryption.");
-        }
-    }
-
-    private void processReceiverDecryptionObject(Response response) {
-        if (isCorrectResponseType(response,RequestType.DECRYPTION) && isSuccessfulResponse(response)) {
-            getDecryptedCardNumberFromServer(response);
-        }       else  {
-            alertUserForFailedAction(response.getReturnedMessage());
-        }
-    }
-
-    private void getDecryptedCardNumberFromServer(Response response) {
-        decryptedNumber.setText(response.getReturnedMessage());
-    }
-
-    @FXML
-    void clickButtonExit() {
-        disconnectFromServer();
-        closeUserInterface();
     }
 
     private void closeUserInterface() {

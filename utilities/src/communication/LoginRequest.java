@@ -1,9 +1,8 @@
 package communication;
 
-
 import java.io.Serializable;
 
-public class LoginRequest extends Request implements Serializable  {
+public class LoginRequest extends Request implements Serializable {
     private String username;
     private String password;
 

@@ -160,15 +160,15 @@ public class ServerController implements Initializable {
 
                         if (userExists) {
                             displayMessage(String.format("Logging in user %s.", username));
-                            Response result = new Response(RequestType.LOGIN,ResponseStatus.SUCCESS,username);
+                            Response result = new Response(RequestType.LOGIN, ResponseStatus.SUCCESS, username);
                             clientName = username;
 
                             outputStream.writeObject(result);
                             outputStream.flush();
                         } else {
                             displayMessage(String.format("User %s could not be found.", username));
-                            String errorMessage= "You have entered an incorrect name and/or password.";
-                            Response result = new Response(RequestType.LOGIN,ResponseStatus.FAILURE,errorMessage);
+                            String errorMessage = "You have entered an incorrect name and/or password.";
+                            Response result = new Response(RequestType.LOGIN, ResponseStatus.FAILURE, errorMessage);
                             outputStream.writeObject(result);
                             outputStream.flush();
                         }
@@ -178,16 +178,14 @@ public class ServerController implements Initializable {
                                 .replaceAll(" ", "");
 
                         if (validator.validationByLuhn(cardNumber) && validator.validationByRegexDecrypted(cardNumber)) {
-                            displayMessage(String.format("%s is a valid card.", cardNumber));
-
                             boolean hasRights = getUserRightsByMethod(clientName, AccessRights.ENCRYPTION);
 
                             if (hasRights) {
                                 String encryptedNumber = cipher.encrypt(cardNumber);
-                                displayMessage(String.format("Sending %s back to user %s"
+                                displayMessage(String.format("Sending %s back to %s"
                                         , encryptedNumber, clientName));
 
-                                Response result = new Response(RequestType.ENCRYPTION,ResponseStatus.SUCCESS,encryptedNumber);
+                                Response result = new Response(RequestType.ENCRYPTION, ResponseStatus.SUCCESS, encryptedNumber);
                                 outputStream.writeObject(result);
 
                                 cardController.addCard(cardNumber, encryptedNumber);
@@ -195,13 +193,12 @@ public class ServerController implements Initializable {
                                 cardController.saveSortByEncryptionToFile();
                             } else {
                                 String errorMessage = "You do not have the permissions to perform an encryption.";
-                                Response result = new Response(RequestType.ENCRYPTION,ResponseStatus.FAILURE,errorMessage);
+                                Response result = new Response(RequestType.ENCRYPTION, ResponseStatus.FAILURE, errorMessage);
                                 outputStream.writeObject(result);
                             }
                         } else {
                             String errorMessage = String.format("%s is not a valid card", cardNumber);
-                            displayMessage(errorMessage);
-                            Response result = new Response(RequestType.ENCRYPTION,ResponseStatus.FAILURE,errorMessage);
+                            Response result = new Response(RequestType.ENCRYPTION, ResponseStatus.FAILURE, errorMessage);
                             outputStream.writeObject(result);
                         }
                         outputStream.flush();
@@ -211,16 +208,14 @@ public class ServerController implements Initializable {
                                 .replaceAll(" ", "");
 
                         if (validator.validationByRegexEncrypted(encryptedNumber)) {
-                            displayMessage(String.format("%s is a valid card", encryptedNumber));
-
                             boolean hasRights = getUserRightsByMethod(clientName, AccessRights.DECRYPTION);
 
                             if (hasRights) {
                                 String decryptedNumber = cipher.decrypt(encryptedNumber);
-                                displayMessage(String.format("Sending %s back to user %s"
+                                displayMessage(String.format("Sending %s back to %s"
                                         , decryptedNumber, clientName));
 
-                                Response result = new Response(RequestType.DECRYPTION,ResponseStatus.SUCCESS,decryptedNumber);
+                                Response result = new Response(RequestType.DECRYPTION, ResponseStatus.SUCCESS, decryptedNumber);
                                 outputStream.writeObject(result);
 
                                 cardController.addCard(decryptedNumber, encryptedNumber);
@@ -229,14 +224,13 @@ public class ServerController implements Initializable {
                             } else {
                                 String errorMessage = "You do not have the permissions to perform a decryption.";
 
-                                Response result = new Response(RequestType.DECRYPTION,ResponseStatus.FAILURE,errorMessage);
+                                Response result = new Response(RequestType.DECRYPTION, ResponseStatus.FAILURE, errorMessage);
                                 outputStream.writeObject(result);
                             }
                         } else {
                             String errorMessage = String.format("%s is not a valid card", encryptedNumber);
-                            displayMessage(errorMessage);
 
-                            Response result = new Response(RequestType.DECRYPTION,ResponseStatus.FAILURE,errorMessage);
+                            Response result = new Response(RequestType.DECRYPTION, ResponseStatus.FAILURE, errorMessage);
                             outputStream.writeObject(result);
                         }
                         outputStream.flush();

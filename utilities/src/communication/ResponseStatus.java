@@ -1,7 +1,7 @@
 package communication;
 
 public enum ResponseStatus {
-    SUCCESS ("Success"),
+    SUCCESS("Success"),
     FAILURE("Failure");
 
     private final String statusMessage;

@@ -12,4 +12,5 @@ public abstract class Request implements Serializable {
     public RequestType getType() {
         return type;
     }
+
 }

@@ -1,7 +1,7 @@
 package communication;
 
 public enum RequestType {
-    LOGIN ("Login"),
+    LOGIN("Login"),
     ENCRYPTION("Encryption"),
     DECRYPTION("Decryption");
 
