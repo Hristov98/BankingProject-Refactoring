@@ -1,6 +1,6 @@
 package communicationHandlers;
 
-import clientApp.MessageLogger;
+import clientApp.ClientMessageLogger;
 import communication.EncryptionRequest;
 import communication.RequestType;
 
@@ -13,7 +13,7 @@ public class EncryptionHandler extends ActionHandler {
     }
 
     @Override
-    public boolean processResponseFromServer(ObjectInputStream inputStream, MessageLogger logger) {
+    public boolean processResponseFromServer(ObjectInputStream inputStream, ClientMessageLogger logger) {
         try {
             response = getResponseFromServer(inputStream);
             return isResponseValid(response, RequestType.ENCRYPTION);

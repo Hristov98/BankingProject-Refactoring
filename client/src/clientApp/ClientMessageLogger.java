@@ -3,10 +3,10 @@ package clientApp;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-public class MessageLogger {
+public class ClientMessageLogger {
     ObjectOutputStream outputStream;
 
-    MessageLogger(ObjectOutputStream outputStream) {
+    ClientMessageLogger(ObjectOutputStream outputStream) {
         this.outputStream = outputStream;
     }
 

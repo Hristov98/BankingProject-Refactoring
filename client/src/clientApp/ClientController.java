@@ -23,7 +23,7 @@ public class ClientController implements Initializable {
     private ObjectOutputStream outputStream;
     private String clientNetworkAddress;
     private Socket clientSocket;
-    private MessageLogger logger;
+    private ClientMessageLogger logger;
 
     @FXML
     private TabPane tabMenu;
@@ -96,7 +96,7 @@ public class ClientController implements Initializable {
     }
 
     private void initialiseMessageLogger() {
-        logger = new MessageLogger(outputStream);
+        logger = new ClientMessageLogger(outputStream);
     }
 
     @FXML

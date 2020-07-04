@@ -1,6 +1,6 @@
 package communicationHandlers;
 
-import clientApp.MessageLogger;
+import clientApp.ClientMessageLogger;
 import communication.Request;
 import communication.RequestType;
 import communication.Response;
@@ -24,7 +24,7 @@ public abstract class ActionHandler {
         outputStream.flush();
     }
 
-    public abstract boolean processResponseFromServer(ObjectInputStream inputStream, MessageLogger logger);
+    public abstract boolean processResponseFromServer(ObjectInputStream inputStream, ClientMessageLogger logger);
 
     protected Response getResponseFromServer(ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
         return (Response) inputStream.readObject();
