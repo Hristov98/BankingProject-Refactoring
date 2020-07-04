@@ -173,7 +173,7 @@ public class ClientRunnable implements Runnable {
             User user = iterator.next();
             if (username.equals(user.getUsername())) {
                 if (user.getPermissions().equals(rights)
-                        || user.getPermissions().equals(AccessRights.FULL)) {
+                        || user.getPermissions().equals(AccessRights.FULL_ACCESS)) {
                     logger.displayMessage(String.format("%s's rights have been confirmed.", username));
                     hasRights = true;
                     break;

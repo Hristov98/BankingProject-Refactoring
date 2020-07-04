@@ -1,10 +1,9 @@
 package other;
 
 public enum AccessRights {
-    NONE("NA"),
-    ENCRYPTION("E"),
-    DECRYPTION("D"),
-    FULL("ED");
+    ENCRYPTION("Encryption"),
+    DECRYPTION("Decryption"),
+    FULL_ACCESS("Full Access");
 
     private String rights;
 
