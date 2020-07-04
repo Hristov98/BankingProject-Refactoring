@@ -1,4 +1,4 @@
 module utilities {
-    exports wrappers;
     exports other;
+    exports communication;
 }

@@ -9,9 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import other.*;
-import wrappers.DecryptionRequest;
-import wrappers.EncryptionRequest;
-import wrappers.LoginRequest;
+import communication.*;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -160,19 +158,20 @@ public class ServerController implements Initializable {
                             }
                         }
 
-                        LoginRequest result = new LoginRequest();
                         if (userExists) {
                             displayMessage(String.format("Logging in user %s.", username));
-                            result.setUserValid(true);
-
+                            Response result = new Response(RequestType.LOGIN,ResponseStatus.SUCCESS,username);
                             clientName = username;
+
+                            outputStream.writeObject(result);
+                            outputStream.flush();
                         } else {
                             displayMessage(String.format("User %s could not be found.", username));
-                            result.setUserValid(false);
+                            String errorMessage= "You have entered an incorrect name and/or password.";
+                            Response result = new Response(RequestType.LOGIN,ResponseStatus.FAILURE,errorMessage);
+                            outputStream.writeObject(result);
+                            outputStream.flush();
                         }
-
-                        outputStream.writeObject(result);
-                        outputStream.flush();
                     }
                     if (object instanceof EncryptionRequest) {
                         String cardNumber = ((EncryptionRequest) object).getCardNumber()
@@ -188,7 +187,7 @@ public class ServerController implements Initializable {
                                 displayMessage(String.format("Sending %s back to user %s"
                                         , encryptedNumber, clientName));
 
-                                EncryptionRequest result = new EncryptionRequest(encryptedNumber);
+                                Response result = new Response(RequestType.ENCRYPTION,ResponseStatus.SUCCESS,encryptedNumber);
                                 outputStream.writeObject(result);
 
                                 cardController.addCard(cardNumber, encryptedNumber);
@@ -196,12 +195,14 @@ public class ServerController implements Initializable {
                                 cardController.saveSortByEncryptionToFile();
                             } else {
                                 String errorMessage = "You do not have the permissions to perform an encryption.";
-                                outputStream.writeObject(errorMessage);
+                                Response result = new Response(RequestType.ENCRYPTION,ResponseStatus.FAILURE,errorMessage);
+                                outputStream.writeObject(result);
                             }
                         } else {
                             String errorMessage = String.format("%s is not a valid card", cardNumber);
                             displayMessage(errorMessage);
-                            outputStream.writeObject(errorMessage);
+                            Response result = new Response(RequestType.ENCRYPTION,ResponseStatus.FAILURE,errorMessage);
+                            outputStream.writeObject(result);
                         }
                         outputStream.flush();
                     }
@@ -219,7 +220,7 @@ public class ServerController implements Initializable {
                                 displayMessage(String.format("Sending %s back to user %s"
                                         , decryptedNumber, clientName));
 
-                                DecryptionRequest result = new DecryptionRequest(decryptedNumber);
+                                Response result = new Response(RequestType.DECRYPTION,ResponseStatus.SUCCESS,decryptedNumber);
                                 outputStream.writeObject(result);
 
                                 cardController.addCard(decryptedNumber, encryptedNumber);
@@ -227,13 +228,16 @@ public class ServerController implements Initializable {
                                 cardController.saveSortByEncryptionToFile();
                             } else {
                                 String errorMessage = "You do not have the permissions to perform a decryption.";
-                                outputStream.writeObject(errorMessage);
+
+                                Response result = new Response(RequestType.DECRYPTION,ResponseStatus.FAILURE,errorMessage);
+                                outputStream.writeObject(result);
                             }
                         } else {
                             String errorMessage = String.format("%s is not a valid card", encryptedNumber);
                             displayMessage(errorMessage);
 
-                            outputStream.writeObject(errorMessage);
+                            Response result = new Response(RequestType.DECRYPTION,ResponseStatus.FAILURE,errorMessage);
+                            outputStream.writeObject(result);
                         }
                         outputStream.flush();
                     }

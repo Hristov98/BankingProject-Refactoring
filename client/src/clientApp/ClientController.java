@@ -1,12 +1,10 @@
 package clientApp;
 
+import communication.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import wrappers.DecryptionRequest;
-import wrappers.EncryptionRequest;
-import wrappers.LoginRequest;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -113,14 +111,18 @@ public class ClientController implements Initializable {
     }
 
     private void sendLoginRequestToServer() throws IOException {
-        LoginRequest loginRequest = new LoginRequest(username.getText(), password.getText());
-        outputStream.writeObject(loginRequest);
+        Request loginRequest = new LoginRequest(username.getText(), password.getText());
+        sendToServer(loginRequest);
+    }
+
+    private void sendToServer(Request request) throws IOException {
+        outputStream.writeObject(request);
         outputStream.flush();
     }
 
     private void processResponseToLoginRequest() {
         try {
-            Object response = getResponseFromServer();
+            Response response = getResponseFromServer();
             processReceivedLoginObject(response);
         } catch (IOException ioException) {
             displayMessage("Input/Output error during client login.");
@@ -131,23 +133,26 @@ public class ClientController implements Initializable {
         }
     }
 
-    private Object getResponseFromServer() throws IOException, ClassNotFoundException {
-        return inputStream.readObject();
+    private Response getResponseFromServer() throws IOException, ClassNotFoundException {
+        return (Response) inputStream.readObject();
     }
 
-    private void processReceivedLoginObject(Object response) {
-        if (isResponseALoginRequest(response)) {
-            if (((LoginRequest) response).isUserValid()) {
+    private void processReceivedLoginObject(Response response) {
+        if (isCorrectResponseType(response, RequestType.LOGIN)) {
+            if (isSuccessfulResponse(response)) {
                 logInUser();
             } else {
-                alertUserForFailedLogin();
-                disconnectFromServer();
+                alertUserForFailedAction(response.getReturnedMessage());
             }
         } else System.err.println("Wrong wrapper class receiver from server.\n");
     }
 
-    private boolean isResponseALoginRequest(Object response) {
-        return response instanceof LoginRequest;
+    private boolean isCorrectResponseType(Response response, RequestType type) {
+        return response.getType() == type;
+    }
+
+    private boolean isSuccessfulResponse(Response response) {
+        return response.getStatus() == ResponseStatus.SUCCESS;
     }
 
     private void logInUser() {
@@ -164,11 +169,10 @@ public class ClientController implements Initializable {
         tabMenu.getTabs().remove(0);
     }
 
-    private void alertUserForFailedLogin() {
+    private void alertUserForFailedAction(String failureMessage) {
         Alert failedLoginAlert = new Alert(Alert.AlertType.ERROR);
         failedLoginAlert.setTitle("Error window");
-        failedLoginAlert.setHeaderText("You have entered an incorrect name and/or password.");
-        failedLoginAlert.setContentText(" Closing connection...");
+        failedLoginAlert.setHeaderText(failureMessage);
         failedLoginAlert.show();
     }
 
@@ -215,8 +219,8 @@ public class ClientController implements Initializable {
 
     private void processResponseToEncryptionRequest() {
         try {
-            Object response = getResponseFromServer();
-            processReceiverEncryptionObject(response);
+            Response response = getResponseFromServer();
+            processReceivedEncryptionObject(response);
         } catch (IOException ioException) {
             displayMessage("Input/Output error during card encryption.");
             ioException.printStackTrace();
@@ -225,32 +229,16 @@ public class ClientController implements Initializable {
         }
     }
 
-    private void processReceiverEncryptionObject(Object response) {
-        if (isResponseAnEncryptionRequest(response)) {
+    private void processReceivedEncryptionObject(Response response) {
+        if (isCorrectResponseType(response,RequestType.ENCRYPTION) && isSuccessfulResponse(response)) {
             getEncryptedCardNumberFromServer(response);
-        } else if (isResponseAString(response)) {
-            alertUserForFailedEncryption(response);
+        } else {
+            alertUserForFailedAction(response.getReturnedMessage());
         }
     }
 
-    private boolean isResponseAnEncryptionRequest(Object response) {
-        return response instanceof EncryptionRequest;
-    }
-
-    private boolean isResponseAString(Object response) {
-        return response instanceof String;
-    }
-
-    private void getEncryptedCardNumberFromServer(Object response) {
-        encryptedNumber.setText(((EncryptionRequest) response).getCardNumber());
-    }
-
-    private void alertUserForFailedEncryption(Object response) {
-        Alert failedEncryptionAlert = new Alert(Alert.AlertType.ERROR);
-        failedEncryptionAlert.setTitle("Error window");
-        failedEncryptionAlert.setHeaderText("Error during encryption.");
-        failedEncryptionAlert.setContentText((String) response);
-        failedEncryptionAlert.show();
+    private void getEncryptedCardNumberFromServer(Response response) {
+        encryptedNumber.setText(response.getReturnedMessage());
     }
 
     @FXML
@@ -258,7 +246,6 @@ public class ClientController implements Initializable {
         displayMessage(String.format("Sending decryption request from %s.", username.getText()));
         sendDecryptionRequestToServer();
         processResponseToDecryptionRequest();
-
     }
 
     private void sendDecryptionRequestToServer() throws IOException {
@@ -269,7 +256,7 @@ public class ClientController implements Initializable {
 
     private void processResponseToDecryptionRequest() {
         try {
-            Object response = getResponseFromServer();
+            Response response = getResponseFromServer();
             processReceiverDecryptionObject(response);
         } catch (IOException ioException) {
             displayMessage("Input/Output error during card decryption.");
@@ -279,29 +266,16 @@ public class ClientController implements Initializable {
         }
     }
 
-    private void processReceiverDecryptionObject(Object response) {
-        if (isResponseADecryptionRequest(response)) {
+    private void processReceiverDecryptionObject(Response response) {
+        if (isCorrectResponseType(response,RequestType.DECRYPTION) && isSuccessfulResponse(response)) {
             getDecryptedCardNumberFromServer(response);
+        }       else  {
+            alertUserForFailedAction(response.getReturnedMessage());
         }
-        if (response instanceof String) {
-            alertUserForFailedDecryption(response);
-        }
     }
 
-    private boolean isResponseADecryptionRequest(Object response) {
-        return response instanceof DecryptionRequest;
-    }
-
-    private void getDecryptedCardNumberFromServer(Object response) {
-        decryptedNumber.setText(((DecryptionRequest) response).getCardNumber());
-    }
-
-    private void alertUserForFailedDecryption(Object response) {
-        Alert failedDecryptionAlert = new Alert(Alert.AlertType.ERROR);
-        failedDecryptionAlert.setTitle("Error window");
-        failedDecryptionAlert.setHeaderText("Error during decryption.");
-        failedDecryptionAlert.setContentText((String) response);
-        failedDecryptionAlert.show();
+    private void getDecryptedCardNumberFromServer(Response response) {
+        decryptedNumber.setText(response.getReturnedMessage());
     }
 
     @FXML
