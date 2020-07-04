@@ -4,7 +4,6 @@ import communication.*;
 import javafx.scene.control.TextArea;
 import other.*;
 
-import javax.crypto.Cipher;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -30,8 +29,22 @@ public class ClientRunnable implements Runnable {
         logger = new ServerMessageLogger(textArea);
         this.validator = validator;
         this.cipher = cipher;
-        this.registeredUsers= registeredUsers;
+        this.registeredUsers = registeredUsers;
         this.cardController = cardController;
+    }
+
+    @Override
+    public void run() {
+        logger.displayMessage("Connection received from: " + connection.getInetAddress().getHostName());
+
+        try {
+            getStreams();
+            processConnection();
+        } catch (IOException ioException) {
+            logger.displayMessage(String.format("%s has terminated the connection.", clientName));
+        } finally {
+            closeConnection();
+        }
     }
 
     private void getStreams() throws IOException {
@@ -186,21 +199,6 @@ public class ClientRunnable implements Runnable {
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();
-        }
-    }
-
-    @Override
-    public void run() {
-        logger.displayMessage("Connection received from: "
-                + connection.getInetAddress().getHostName());
-
-        try {
-            getStreams();
-            processConnection();
-        } catch (IOException ioException) {
-            logger.displayMessage(String.format("%s has terminated the connection.", clientName));
-        } finally {
-            closeConnection();
         }
     }
 }

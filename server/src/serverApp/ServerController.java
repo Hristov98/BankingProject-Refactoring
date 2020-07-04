@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ServerController implements Initializable {
+    private final String USER_FILE_NAME = "users.ser";
     private ExecutorService executor;
     private ServerSocket serverSocket;
     private UserWrapper registeredUsers;
@@ -32,108 +33,133 @@ public class ServerController implements Initializable {
     private BankCardTableController cardController;
     private ServerMessageLogger logger;
 
+    @FXML
+    private TextArea textAreaLog;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        initialiseClassVariables();
+        loadUsers();
+        loadCardTableSortedByCardNumber();
+        loadCardTableSortedByEncryptedCardNumber();
+        startServerThread();
+    }
+
+    private void initialiseClassVariables() {
         executor = Executors.newCachedThreadPool();
         cipher = new SubstitutionCipher(5);
         cardController = new BankCardTableController();
         validator = new Validation();
         logger = new ServerMessageLogger(textAreaLog);
+    }
 
-        File userFile = new File("users.ser");
-        File tableSortedByCard = new File("tableSortedByCard.txt");
-        File tableSortedByEncryption = new File("tableSortedByEncryption.txt");
-
-        if (userFile.exists()) {
-            registeredUsers = loadUsers();
+    private void loadUsers() {
+        try {
+            ObjectInputStream inputStream = openFile();
+            UserWrapper users = (UserWrapper) inputStream.readObject();
+            setRegisteredUsers(users);
+            inputStream.close();
             logger.displayMessage("Successfully loaded users.");
-        } else {
-            logger.displayMessage("WARNING: Could not load users.");
+        } catch (IOException ioException) {
+            logger.displayMessage("Error while opening file.");
+            ioException.printStackTrace();
+        } catch (ClassNotFoundException unknownClassException) {
+            logger.displayMessage("Unknown object loaded.\n");
+            unknownClassException.printStackTrace();
         }
+    }
+
+    private ObjectInputStream openFile() throws IOException {
+        File userFile = new File(USER_FILE_NAME);
+
+        if (!userFile.exists()) {
+            logger.displayMessage("WARNING: User file does not exist. Creating empty user file.");
+            userFile.createNewFile();
+            saveEmptyContainerToFile();
+        }
+
+        return new ObjectInputStream(new FileInputStream(USER_FILE_NAME));
+    }
+
+    private void saveEmptyContainerToFile() {
+        try {
+            ObjectOutputStream outputStream =
+                    new ObjectOutputStream(new FileOutputStream("users.ser"));
+            outputStream.writeObject(new UserWrapper());
+            outputStream.close();
+        } catch (IOException ioException) {
+            logger.displayMessage("ERROR: Could not save empty container to file.");
+            ioException.printStackTrace();
+        }
+    }
+
+    private void setRegisteredUsers(UserWrapper users) {
+        registeredUsers = new UserWrapper(users);
+    }
+
+    private void loadCardTableSortedByCardNumber() {
+        File tableSortedByCard = new File("tableSortedByCard.txt");
+
         if (tableSortedByCard.exists()) {
             cardController.setCardTableSortedByCardNumber(cardController.readSortByCardFromFile());
             logger.displayMessage("Successfully loaded tableSortedByCard.txt.");
         } else {
             logger.displayMessage("WARNING: Could not load table with cards sorted by card number.");
-
         }
+    }
+
+    private void loadCardTableSortedByEncryptedCardNumber() {
+        File tableSortedByEncryption = new File("tableSortedByEncryption.txt");
+
         if (tableSortedByEncryption.exists()) {
             cardController.setCardTableSortedByEncryptedNumber(cardController.readSortByEncryptionFromFile());
             logger.displayMessage("Successfully loaded tableSortedByEncryption.txt.");
         } else {
             logger.displayMessage("WARNING: Could not load table with cards sorted by encryption.");
         }
-
-        new Thread(this::startServer).start();
     }
 
-    private UserWrapper loadUsers() {
-        registeredUsers = null;
-        ObjectInputStream inputStream = null;
-
-        try {
-            inputStream = new ObjectInputStream(new FileInputStream("users.ser"));
-        } catch (IOException ioException) {
-            System.err.println("Error while opening file.");
-        }
-
-        try {
-            Object object = inputStream.readObject();
-            if (object instanceof UserWrapper) {
-                registeredUsers = new UserWrapper((UserWrapper) object);
-            }
-        } catch (EOFException endOfFileException) {
-            System.err.println("Reached EOF.");
-        } catch (ClassNotFoundException unknownClassException) {
-            System.err.println("Unable to create object.\n");
-        } catch (IOException ioException) {
-            System.err.println("Error while reading from file.\n");
-        }
-
-        try {
-            if (inputStream != null)
-                inputStream.close();
-        } catch (IOException ioException) {
-            System.err.println("Error closing file.");
-
-        }
-
-        return registeredUsers;
+    private void startServerThread() {
+        new Thread(this::startServer).start();
     }
 
     public void startServer() {
         try {
-            serverSocket = new ServerSocket(12345, 100);
-            logger.displayMessage("Waiting for client actions...");
-
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-                clientSession = new ClientRunnable(clientSocket,validator,cipher,textAreaLog,registeredUsers,cardController);
-                executor.execute(clientSession);
-            }
-
+            initialiseServerSocket();
+            listenForClientConnections();
         } catch (IOException ioException) {
+            logger.displayMessage("Error: Server could not start correctly");
             ioException.printStackTrace();
         }
     }
 
+    private void initialiseServerSocket() throws IOException {
+        serverSocket = new ServerSocket(12345, 100);
+    }
 
+    private void listenForClientConnections() throws IOException {
+        while (true) {
+            connectToClient();
+            executeSession();
+        }
+    }
 
+    private void connectToClient() throws IOException {
+        Socket clientSocket = serverSocket.accept();
+        clientSession = new ClientRunnable(clientSocket, validator, cipher,
+                textAreaLog, registeredUsers, cardController);
+    }
 
-    @FXML
-    private TextArea textAreaLog;
-
-    @FXML
-    void clickButtonExit() {
-        Platform.exit();
-        executor.shutdown();
-        System.exit(0);
+    private void executeSession() {
+        executor.execute(clientSession);
     }
 
     @FXML
     void clickButtonRegisterUser() throws IOException {
-        logger.displayMessage("Adding new user.");
+        openRegistrationWindow();
+    }
 
+    private void openRegistrationWindow() throws IOException {
         Stage secondaryStage = new Stage();
         Parent parent = FXMLLoader.load(getClass().getResource("registration.fxml"));
         secondaryStage.setTitle("Registration menu");
@@ -149,10 +175,11 @@ public class ServerController implements Initializable {
     @FXML
     void clickButtonUpdateAndDisplayUsers() {
         try {
-            registeredUsers = loadUsers();
+            loadUsers();
             logger.displayMessage(registeredUsers.toString());
         } catch (NullPointerException nullPointerException) {
-            System.err.println("Error: Could not find file to update.");
+            logger.displayMessage("Error: Could not find file to update.");
+            nullPointerException.printStackTrace();
         }
     }
 
@@ -161,9 +188,8 @@ public class ServerController implements Initializable {
         TreeMap<String, String> table = cardController.readSortByEncryptionFromFile();
         cardController.setCardTableSortedByEncryptedNumber(table);
 
-        logger.displayMessage(String.format("Displaying card table sorted by encryption: \n" +
-                        "Card number\t\tEncrypted Number\n%s",
-                cardController.toStringSortedByEncryption()));
+        logger.displayMessage(String.format("Displaying card table sorted by encryption: \n"
+                + "Card number\t\tEncrypted Number\n%s", cardController.toStringSortedByEncryption()));
     }
 
     @FXML
@@ -171,8 +197,14 @@ public class ServerController implements Initializable {
         TreeMap<String, String> table = cardController.readSortByCardFromFile();
         cardController.setCardTableSortedByCardNumber(table);
 
-        logger.displayMessage(String.format("Displaying card table sorted by card number: \n" +
-                        "Card number\t\tEncrypted Number\n%s",
-                cardController.toStringSortedByCard()));
+        logger.displayMessage(String.format("Displaying card table sorted by card number: \n"
+                + "Card number\t\tEncrypted Number\n%s", cardController.toStringSortedByCard()));
+    }
+
+    @FXML
+    void clickButtonExit() {
+        Platform.exit();
+        executor.shutdown();
+        System.exit(0);
     }
 }
