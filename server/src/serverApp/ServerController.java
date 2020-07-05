@@ -24,11 +24,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ServerController implements Initializable {
-
     private ExecutorService executor;
     private ServerSocket serverSocket;
-    private SubstitutionCipher cipher;
-    private Validation validator;
     private ClientRunnable clientSession;
     private UserLoader userLoader;
     private BankCardTableController cardController;
@@ -48,9 +45,7 @@ public class ServerController implements Initializable {
 
     private void initialiseClassVariables() {
         executor = Executors.newCachedThreadPool();
-        cipher = new SubstitutionCipher(5);
         cardController = new BankCardTableController();
-        validator = new Validation();
         logger = new ServerMessageLogger(textAreaLog);
         userLoader = new UserLoader(logger);
     }
@@ -106,8 +101,14 @@ public class ServerController implements Initializable {
 
     private void connectToClient() throws IOException {
         Socket clientSocket = serverSocket.accept();
-        clientSession = new ClientRunnable(clientSocket, validator, cipher,
-                textAreaLog, userLoader.getRegisteredUsers(), cardController);
+        initialiseClientSession(clientSocket);
+    }
+
+    private void initialiseClientSession(Socket clientSocket) {
+        clientSession = new ClientRunnable(clientSocket);
+        clientSession.initialiseUserLoader(userLoader);
+        clientSession.initialiseCardController(cardController);
+        clientSession.initialiseLogger(textAreaLog);
     }
 
     private void executeSession() {

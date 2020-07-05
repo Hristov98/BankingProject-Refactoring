@@ -5,7 +5,7 @@ import javafx.scene.control.TextArea;
 import cardManipulation.*;
 import userStorage.AccessRights;
 import userStorage.User;
-import userStorage.UserWrapper;
+import userStorage.UserLoader;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,25 +15,37 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 public class ClientRunnable implements Runnable {
-    private ObjectOutputStream outputStream;
-    private ObjectInputStream inputStream;
-    private String clientName;
     private final Socket connection;
-    private ServerMessageLogger logger;
-    private SubstitutionCipher cipher;
-    private Validation validator;
-    private UserWrapper registeredUsers;
+    private final SubstitutionCipher cipher;
+    private final Validation validator;
+    private String clientName;
+    private ObjectInputStream inputStream;
+    private ObjectOutputStream outputStream;
+    private UserLoader userLoader;
     private BankCardTableController cardController;
+    private ServerMessageLogger logger;
 
-    ClientRunnable(Socket connect, Validation validator, SubstitutionCipher cipher,
-                   TextArea textArea, UserWrapper registeredUsers, BankCardTableController cardController) {
+    ClientRunnable(Socket connect) {
         connection = connect;
-        clientName = "guest";
-        logger = new ServerMessageLogger(textArea);
-        this.validator = validator;
-        this.cipher = cipher;
-        this.registeredUsers = registeredUsers;
+        setClientName("guest");
+        cipher = new SubstitutionCipher(5);
+        validator = new Validation();
+    }
+
+    private void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    public void initialiseUserLoader(UserLoader userLoader) {
+        this.userLoader = userLoader;
+    }
+
+    public void initialiseCardController(BankCardTableController cardController) {
         this.cardController = cardController;
+    }
+
+    public void initialiseLogger(TextArea textArea) {
+        logger = new ServerMessageLogger(textArea);
     }
 
     @Override
@@ -41,7 +53,7 @@ public class ClientRunnable implements Runnable {
         logger.displayMessage("Connection received from: " + connection.getInetAddress().getHostName());
 
         try {
-            getStreams();
+            initialiseStreams();
             processConnection();
         } catch (IOException ioException) {
             logger.displayMessage(String.format("%s has terminated the connection.", clientName));
@@ -50,12 +62,19 @@ public class ClientRunnable implements Runnable {
         }
     }
 
-    private void getStreams() throws IOException {
+    private void initialiseStreams() throws IOException {
+        initialiseInputStream();
+        initialiseOutputStream();
+        logger.displayMessage("Server Input/Output streams loaded successfully.");
+    }
+
+    private void initialiseInputStream() throws IOException {
         outputStream = new ObjectOutputStream(connection.getOutputStream());
         outputStream.flush();
-        inputStream = new ObjectInputStream(connection.getInputStream());
+    }
 
-        logger.displayMessage("Server Input/Output streams loaded successfully.");
+    private void initialiseOutputStream() throws IOException {
+        inputStream = new ObjectInputStream(connection.getInputStream());
     }
 
     private void processConnection() throws IOException {
@@ -73,7 +92,7 @@ public class ClientRunnable implements Runnable {
                     String password = ((LoginRequest) object).getPassword();
 
                     boolean userExists = false;
-                    HashSet<User> users = registeredUsers.getUsers();
+                    HashSet<User> users = userLoader.getRegisteredUsers().getUsers();
                     Iterator<User> iterator = users.iterator();
 
                     while (iterator.hasNext()) {
@@ -169,7 +188,7 @@ public class ClientRunnable implements Runnable {
 
     private boolean getUserRightsByMethod(String username, AccessRights rights) {
         boolean hasRights = false;
-        HashSet<User> users = registeredUsers.getUsers();
+        HashSet<User> users = userLoader.getRegisteredUsers().getUsers();
         Iterator<User> iterator = users.iterator();
 
         while (iterator.hasNext()) {
