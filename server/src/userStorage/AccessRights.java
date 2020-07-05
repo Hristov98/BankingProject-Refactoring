@@ -1,4 +1,4 @@
-package other;
+package userStorage;
 
 public enum AccessRights {
     ENCRYPTION("Encryption"),

@@ -1,4 +1,4 @@
-package other;
+package userStorage;
 
 import java.io.Serializable;
 

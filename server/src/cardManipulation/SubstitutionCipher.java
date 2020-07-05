@@ -1,4 +1,4 @@
-package other;
+package cardManipulation;
 
 public class SubstitutionCipher {
     private int cipherKey;

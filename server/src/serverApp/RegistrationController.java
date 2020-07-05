@@ -4,8 +4,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import other.AccessRights;
-import userControllers.UserRegistrator;
+import userStorage.AccessRights;
+import userStorage.UserRegistrator;
 
 import java.io.Serializable;
 import java.net.URL;

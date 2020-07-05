@@ -1,6 +1,5 @@
-package userControllers;
+package userStorage;
 
-import other.UserWrapper;
 import serverApp.ServerMessageLogger;
 
 import java.io.*;

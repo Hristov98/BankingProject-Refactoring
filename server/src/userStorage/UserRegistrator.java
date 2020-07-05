@@ -1,8 +1,4 @@
-package userControllers;
-
-import other.AccessRights;
-import other.User;
-import other.UserWrapper;
+package userStorage;
 
 import java.io.*;
 

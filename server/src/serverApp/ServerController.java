@@ -8,10 +8,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
-import other.BankCardTableController;
-import other.SubstitutionCipher;
-import other.Validation;
-import userControllers.UserLoader;
+import cardManipulation.BankCardTableController;
+import cardManipulation.SubstitutionCipher;
+import cardManipulation.Validation;
+import userStorage.UserLoader;
 
 import java.io.File;
 import java.io.IOException;

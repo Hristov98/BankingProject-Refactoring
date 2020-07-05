@@ -1,4 +1,4 @@
-package other;
+package cardManipulation;
 
 import java.io.File;
 import java.io.FileNotFoundException;

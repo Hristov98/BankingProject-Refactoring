@@ -1,4 +1,4 @@
-package other;
+package cardManipulation;
 
 public class Validation {
     public boolean validationByRegexDecrypted(String cardNumber) {

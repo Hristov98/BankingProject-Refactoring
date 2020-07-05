@@ -2,7 +2,10 @@ package serverApp;
 
 import communication.*;
 import javafx.scene.control.TextArea;
-import other.*;
+import cardManipulation.*;
+import userStorage.AccessRights;
+import userStorage.User;
+import userStorage.UserWrapper;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
