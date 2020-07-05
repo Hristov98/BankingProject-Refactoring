@@ -30,17 +30,13 @@ public abstract class ActionHandler {
         return (Response) inputStream.readObject();
     }
 
-    protected boolean isResponseValid(Response response, RequestType type) {
-        if (isCorrectType(response, type) && isSuccessful(response)) {
+    protected boolean isResponseValid(Response response) {
+        if (isSuccessful(response)) {
             return true;
         } else {
             alertUserForFailedAction(getResponseMessage());
             return false;
         }
-    }
-
-    private boolean isCorrectType(Response response, RequestType type) {
-        return response.getType() == type;
     }
 
     private boolean isSuccessful(Response response) {

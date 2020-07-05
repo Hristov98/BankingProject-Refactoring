@@ -2,7 +2,6 @@ package communicationHandlers;
 
 import clientApp.ClientMessageLogger;
 import communication.LoginRequest;
-import communication.RequestType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,7 +15,7 @@ public class LoginHandler extends ActionHandler {
     public boolean processResponseFromServer(ObjectInputStream inputStream, ClientMessageLogger logger) {
         try {
             response = getResponseFromServer(inputStream);
-            return isResponseValid(response, RequestType.LOGIN);
+            return isResponseValid(response);
         } catch (IOException ioException) {
             logger.displayMessageOnServer("Input/Output error during client login.");
             ioException.printStackTrace();

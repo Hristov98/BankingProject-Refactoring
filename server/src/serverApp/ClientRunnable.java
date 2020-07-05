@@ -148,7 +148,7 @@ public class ClientRunnable implements Runnable {
         logger.displayMessage(String.format("Logging in user %s.", username));
         setClientName(username);
 
-        Response result = new Response(RequestType.LOGIN, ResponseStatus.SUCCESS, username);
+        Response result = new Response(ResponseStatus.SUCCESS, username);
         sendResponseToClient(result);
     }
 
@@ -161,7 +161,7 @@ public class ClientRunnable implements Runnable {
         logger.displayMessage(String.format("User %s could not be found.", username));
         String errorMessage = "You have entered an incorrect name and/or password.";
 
-        Response result = new Response(RequestType.LOGIN, ResponseStatus.FAILURE, errorMessage);
+        Response result = new Response(ResponseStatus.FAILURE, errorMessage);
         sendResponseToClient(result);
     }
 
@@ -187,7 +187,7 @@ public class ClientRunnable implements Runnable {
 
     private void notifyUserForInvalidEncryptionRights() throws IOException {
         String errorMessage = "You do not have the permissions to perform an encryption.";
-        Response result = new Response(RequestType.ENCRYPTION, ResponseStatus.FAILURE, errorMessage);
+        Response result = new Response(ResponseStatus.FAILURE, errorMessage);
         sendResponseToClient(result);
     }
 
@@ -207,7 +207,7 @@ public class ClientRunnable implements Runnable {
 
     private void notifyUserForInvalidCardNumberDuringEncryption(String cardNumber) throws IOException {
         String errorMessage = String.format("%s is not a valid card", cardNumber);
-        Response result = new Response(RequestType.ENCRYPTION, ResponseStatus.FAILURE, errorMessage);
+        Response result = new Response(ResponseStatus.FAILURE, errorMessage);
         sendResponseToClient(result);
     }
 
@@ -223,7 +223,7 @@ public class ClientRunnable implements Runnable {
 
     private void returnEncryptedCardNumberToClient(String encryptedNumber) throws IOException {
         logger.displayMessage(String.format("Sending %s back to %s", encryptedNumber, clientName));
-        Response result = new Response(RequestType.ENCRYPTION, ResponseStatus.SUCCESS, encryptedNumber);
+        Response result = new Response(ResponseStatus.SUCCESS, encryptedNumber);
         sendResponseToClient(result);
     }
 
@@ -251,13 +251,13 @@ public class ClientRunnable implements Runnable {
 
     private void notifyUserForInvalidCardNumberDuringDecryption(String encryptedNumber) throws IOException {
         String errorMessage = String.format("%s is not a valid card", encryptedNumber);
-        Response result = new Response(RequestType.DECRYPTION, ResponseStatus.FAILURE, errorMessage);
+        Response result = new Response(ResponseStatus.FAILURE, errorMessage);
         sendResponseToClient(result);
     }
 
     private void notifyUserForInvalidDecryptionRights() throws IOException {
         String errorMessage = "You do not have the permissions to perform a decryption.";
-        Response result = new Response(RequestType.DECRYPTION, ResponseStatus.FAILURE, errorMessage);
+        Response result = new Response(ResponseStatus.FAILURE, errorMessage);
         sendResponseToClient(result);
     }
 
@@ -273,7 +273,7 @@ public class ClientRunnable implements Runnable {
 
     private void returnDecryptedCardNumberToClient(String decryptedNumber) throws IOException {
         logger.displayMessage(String.format("Sending %s back to %s", decryptedNumber, clientName));
-        Response result = new Response(RequestType.DECRYPTION, ResponseStatus.SUCCESS, decryptedNumber);
+        Response result = new Response(ResponseStatus.SUCCESS, decryptedNumber);
         sendResponseToClient(result);
     }
 
