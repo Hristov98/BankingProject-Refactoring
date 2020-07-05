@@ -71,8 +71,8 @@ public class ClientController implements Initializable {
     private void startClient() throws IOException {
         try {
             connectToServer();
-            setInputStream();
-            setOutputStream();
+            initialiseInputStream();
+            initialiseOutputStream();
             initialiseMessageLogger();
             logger.displayMessageOnServer("Client Input/Output streams loaded successfully.");
         } catch (EOFException eofException) {
@@ -86,11 +86,11 @@ public class ClientController implements Initializable {
         clientSocket = new Socket(InetAddress.getByName(clientNetworkAddress), 12345);
     }
 
-    private void setInputStream() throws IOException {
+    private void initialiseInputStream() throws IOException {
         inputStream = new ObjectInputStream(clientSocket.getInputStream());
     }
 
-    private void setOutputStream() throws IOException {
+    private void initialiseOutputStream() throws IOException {
         outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
         outputStream.flush();
     }
