@@ -13,5 +13,4 @@ public class DecryptionRequest extends Request implements Serializable {
     public String getCardNumber() {
         return cardNumber;
     }
-
 }

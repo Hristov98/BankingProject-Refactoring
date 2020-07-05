@@ -27,5 +27,4 @@ public class LoginRequest extends Request implements Serializable {
     public String getUsername() {
         return username;
     }
-
 }

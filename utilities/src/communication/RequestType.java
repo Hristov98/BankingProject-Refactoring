@@ -11,5 +11,3 @@ public enum RequestType {
         this.type = type;
     }
 }
-
-
