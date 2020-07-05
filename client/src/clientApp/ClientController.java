@@ -1,9 +1,9 @@
 package clientApp;
 
-import communicationHandlers.ActionHandler;
-import communicationHandlers.DecryptionHandler;
-import communicationHandlers.EncryptionHandler;
-import communicationHandlers.LoginHandler;
+import clientCommunicationHandlers.ActionHandler;
+import clientCommunicationHandlers.DecryptionHandler;
+import clientCommunicationHandlers.EncryptionHandler;
+import clientCommunicationHandlers.LoginHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -149,7 +149,7 @@ public class ClientController implements Initializable {
 
         ActionHandler decryptionHandler = new DecryptionHandler(encryptedNumber.getText());
         decryptionHandler.sendRequestToServer(outputStream);
-        boolean isDecryptionResponseValid = decryptionHandler.processResponseFromServer(inputStream,logger);
+        boolean isDecryptionResponseValid = decryptionHandler.processResponseFromServer(inputStream, logger);
 
         if (isDecryptionResponseValid) {
             setDecryptedCardNumber(decryptionHandler.getResponseMessage());

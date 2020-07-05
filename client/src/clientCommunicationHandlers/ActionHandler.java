@@ -1,8 +1,7 @@
-package communicationHandlers;
+package clientCommunicationHandlers;
 
 import clientApp.ClientMessageLogger;
 import communication.Request;
-import communication.RequestType;
 import communication.Response;
 import communication.ResponseStatus;
 import javafx.scene.control.Alert;

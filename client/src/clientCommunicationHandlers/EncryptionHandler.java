@@ -1,14 +1,14 @@
-package communicationHandlers;
+package clientCommunicationHandlers;
 
 import clientApp.ClientMessageLogger;
-import communication.DecryptionRequest;
+import communication.EncryptionRequest;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-public class DecryptionHandler extends ActionHandler {
-    public DecryptionHandler(String cardNumber) {
-        requestToServer = new DecryptionRequest(cardNumber);
+public class EncryptionHandler extends ActionHandler {
+    public EncryptionHandler(String cardNumber) {
+        requestToServer = new EncryptionRequest(cardNumber);
     }
 
     @Override
@@ -17,10 +17,10 @@ public class DecryptionHandler extends ActionHandler {
             response = getResponseFromServer(inputStream);
             return isResponseValid(response);
         } catch (IOException ioException) {
-            logger.displayMessageOnServer("Input/Output error during card decryption.");
+            logger.displayMessageOnServer("Input/Output error during card encryption.");
             ioException.printStackTrace();
         } catch (ClassNotFoundException unknownClassException) {
-            logger.displayMessageOnServer("Unknown object received during card decryption.");
+            logger.displayMessageOnServer("Unknown object received during card encryption.");
             unknownClassException.printStackTrace();
         }
         return false;
