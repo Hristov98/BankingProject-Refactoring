@@ -11,11 +11,11 @@ import java.io.ObjectOutputStream;
 import java.util.HashSet;
 
 public abstract class RequestProcessor {
-    protected Request clientRequest;
+    private final ObjectOutputStream outputStream;
+    protected final Request clientRequest;
+    protected final UserLoader userLoader;
+    protected final ServerMessageLogger logger;
     protected String clientName;
-    protected UserLoader userLoader;
-    private ObjectOutputStream outputStream;
-    protected ServerMessageLogger logger;
 
     public RequestProcessor(Request clientRequest, UserLoader userLoader,
                             ObjectOutputStream outputStream, ServerMessageLogger logger, String clientName) {

@@ -3,8 +3,8 @@ package communication;
 import java.io.Serializable;
 
 public class LoginRequest extends Request implements Serializable {
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
 
     public LoginRequest(String username, String password) {
         super(RequestType.LOGIN);

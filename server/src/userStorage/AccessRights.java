@@ -5,7 +5,7 @@ public enum AccessRights {
     DECRYPTION("Decryption"),
     FULL_ACCESS("Full Access");
 
-    private String rights;
+    private final String rights;
 
     AccessRights(String permissions) {
         rights = permissions;

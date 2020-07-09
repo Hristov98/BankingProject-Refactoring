@@ -3,7 +3,7 @@ package communication;
 import java.io.Serializable;
 
 public class EncryptionRequest extends Request implements Serializable {
-    private String cardNumber;
+    private final String cardNumber;
 
     public EncryptionRequest(String cardNumber) {
         super(RequestType.ENCRYPTION);

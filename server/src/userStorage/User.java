@@ -3,33 +3,13 @@ package userStorage;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    private String username;
-    private String password;
-    private AccessRights permissions;
+    private final String username;
+    private final String password;
+    private final AccessRights permissions;
 
-    public User() {
-        this("", "", null);
-    }
-
-    public User(User user) {
-        this(user.getUsername(), user.getPassword(), user.getPermissions());
-    }
-
-    public User(String user, String pass, AccessRights perm) {
-        setUsername(user);
-        setPassword(pass);
-        setPermissions(perm);
-    }
-
-    private void setUsername(String username) {
+    public User(String username, String password, AccessRights permissions) {
         this.username = username;
-    }
-
-    private void setPassword(String password) {
         this.password = password;
-    }
-
-    private void setPermissions(AccessRights permissions) {
         this.permissions = permissions;
     }
 

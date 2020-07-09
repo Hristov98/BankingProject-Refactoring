@@ -19,9 +19,9 @@ public class ClientRunnable implements Runnable {
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
     private final ServerMessageLogger logger;
+    private final UserLoader userLoader;
+    private final BankCardTableController cardController;
     private String clientName;
-    private UserLoader userLoader;
-    private BankCardTableController cardController;
 
     ClientRunnable(Socket connect, UserLoader userLoader,
                    BankCardTableController cardController, TextArea textArea) throws IOException {

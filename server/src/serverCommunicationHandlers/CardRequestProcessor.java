@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public abstract class CardRequestProcessor extends RequestProcessor {
-    private BankCardTableController cardController;
+    private final BankCardTableController cardController;
     protected final SubstitutionCipher cipher;
     protected final Validation validator;
 
@@ -23,9 +23,9 @@ public abstract class CardRequestProcessor extends RequestProcessor {
                                 ObjectOutputStream outputStream, ServerMessageLogger logger,
                                 String clientName, BankCardTableController cardController) {
         super(clientRequest, userLoader, outputStream, logger, clientName);
+        this.cardController = cardController;
         cipher = new SubstitutionCipher(5);
         validator = new Validation();
-        this.cardController = cardController;
     }
 
     public abstract String getCardNumberFromRequest();

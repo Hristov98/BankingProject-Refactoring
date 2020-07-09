@@ -3,11 +3,10 @@ package communication;
 import java.io.Serializable;
 
 public class Response implements Serializable {
-    private ResponseStatus status;
-    private String returnedMessage;
+    private final ResponseStatus status;
+    private final String returnedMessage;
 
     public Response(ResponseStatus status, String returnedMessage) {
-
         this.status = status;
         this.returnedMessage = returnedMessage;
     }

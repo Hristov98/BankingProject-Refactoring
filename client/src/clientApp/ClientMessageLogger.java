@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public class ClientMessageLogger {
-    ObjectOutputStream outputStream;
+    private final ObjectOutputStream outputStream;
 
     ClientMessageLogger(ObjectOutputStream outputStream) {
         this.outputStream = outputStream;
