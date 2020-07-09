@@ -17,8 +17,13 @@ public abstract class RequestProcessor {
     private ObjectOutputStream outputStream;
     protected ServerMessageLogger logger;
 
-    public RequestProcessor(Request clientRequest) {
+    public RequestProcessor(Request clientRequest, UserLoader userLoader,
+                            ObjectOutputStream outputStream, ServerMessageLogger logger, String clientName) {
         this.clientRequest = clientRequest;
+        this.userLoader = userLoader;
+        this.outputStream = outputStream;
+        this.logger = logger;
+        setClientName(clientName);
     }
 
     public void setClientName(String clientName) {
@@ -27,18 +32,6 @@ public abstract class RequestProcessor {
 
     public String getClientName() {
         return clientName;
-    }
-
-    public void initialiseUserLoader(UserLoader userLoader) {
-        this.userLoader = userLoader;
-    }
-
-    public void initialiseOutputStream(ObjectOutputStream outputStream) {
-        this.outputStream = outputStream;
-    }
-
-    public void initialiseLogger(ServerMessageLogger logger) {
-        this.logger = logger;
     }
 
     public abstract void processRequest() throws IOException;

@@ -4,13 +4,17 @@ import communication.LoginRequest;
 import communication.Request;
 import communication.Response;
 import communication.ResponseStatus;
+import serverApp.ServerMessageLogger;
 import userStorage.User;
+import userStorage.UserLoader;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 public class LoginRequestProcessor extends RequestProcessor {
-    public LoginRequestProcessor(Request request) {
-        super(request);
+    public LoginRequestProcessor(Request clientRequest, UserLoader userLoader,
+                                 ObjectOutputStream outputStream, ServerMessageLogger logger, String clientName) {
+        super(clientRequest, userLoader, outputStream, logger, clientName);
     }
 
     @Override

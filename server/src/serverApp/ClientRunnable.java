@@ -16,32 +16,27 @@ import java.net.Socket;
 
 public class ClientRunnable implements Runnable {
     private final Socket connection;
-    private ObjectInputStream inputStream;
-    private ObjectOutputStream outputStream;
+    private final ObjectInputStream inputStream;
+    private final ObjectOutputStream outputStream;
+    private final ServerMessageLogger logger;
     private String clientName;
     private UserLoader userLoader;
     private BankCardTableController cardController;
-    private ServerMessageLogger logger;
 
-    ClientRunnable(Socket connect) {
+    ClientRunnable(Socket connect, UserLoader userLoader,
+                   BankCardTableController cardController, TextArea textArea) throws IOException {
         connection = connect;
         setClientName("guest");
+        outputStream = new ObjectOutputStream(connection.getOutputStream());
+        outputStream.flush();
+        inputStream = new ObjectInputStream(connection.getInputStream());
+        this.userLoader = userLoader;
+        this.cardController = cardController;
+        logger = new ServerMessageLogger(textArea);
     }
 
     private void setClientName(String clientName) {
         this.clientName = clientName;
-    }
-
-    public void initialiseUserLoader(UserLoader userLoader) {
-        this.userLoader = userLoader;
-    }
-
-    public void initialiseCardController(BankCardTableController cardController) {
-        this.cardController = cardController;
-    }
-
-    public void initialiseLogger(TextArea textArea) {
-        logger = new ServerMessageLogger(textArea);
     }
 
     @Override
@@ -49,28 +44,12 @@ public class ClientRunnable implements Runnable {
         logger.displayMessage("Connection received from: " + connection.getInetAddress().getHostName());
 
         try {
-            initialiseStreams();
             processConnection();
         } catch (IOException ioException) {
             logger.displayMessage(String.format("%s has terminated the connection.", clientName));
         } finally {
             closeConnection();
         }
-    }
-
-    private void initialiseStreams() throws IOException {
-        initialiseInputStream();
-        initialiseOutputStream();
-        logger.displayMessage("Server Input/Output streams loaded successfully.");
-    }
-
-    private void initialiseInputStream() throws IOException {
-        outputStream = new ObjectOutputStream(connection.getOutputStream());
-        outputStream.flush();
-    }
-
-    private void initialiseOutputStream() throws IOException {
-        inputStream = new ObjectInputStream(connection.getInputStream());
     }
 
     private void processConnection() throws IOException {
@@ -89,19 +68,22 @@ public class ClientRunnable implements Runnable {
                 processString((String) clientRequest);
             }
             if (clientRequest instanceof LoginRequest) {
-                RequestProcessor processor = new LoginRequestProcessor((Request) clientRequest);
-                initialiseProcessor(processor);
+                RequestProcessor processor = new LoginRequestProcessor((Request) clientRequest,
+                        userLoader, outputStream, logger, clientName);
                 processor.processRequest();
+
                 setClientName(processor.getClientName());
             }
             if (clientRequest instanceof EncryptionRequest) {
-                CardRequestProcessor processor = new EncryptionRequestProcessor((Request) clientRequest);
-                initialiseCardProcessor(processor);
+                CardRequestProcessor processor = new EncryptionRequestProcessor((Request) clientRequest,
+                        userLoader, outputStream, logger, clientName, cardController);
+
                 processor.processRequest();
             }
             if (clientRequest instanceof DecryptionRequest) {
-                CardRequestProcessor processor = new DecryptionRequestProcessor((Request) clientRequest);
-                initialiseCardProcessor(processor);
+                CardRequestProcessor processor = new DecryptionRequestProcessor((Request) clientRequest,
+                        userLoader, outputStream, logger, clientName, cardController);
+
                 processor.processRequest();
             }
         } catch (ClassNotFoundException classNotFoundException) {
@@ -112,18 +94,6 @@ public class ClientRunnable implements Runnable {
 
     private void processString(String message) {
         logger.displayMessage(message);
-    }
-
-    private void initialiseProcessor(RequestProcessor processor) {
-        processor.setClientName(clientName);
-        processor.initialiseOutputStream(outputStream);
-        processor.initialiseUserLoader(userLoader);
-        processor.initialiseLogger(logger);
-    }
-
-    private void initialiseCardProcessor(CardRequestProcessor processor) {
-        initialiseProcessor(processor);
-        processor.initialiseCardController(cardController);
     }
 
     private void closeConnection() {

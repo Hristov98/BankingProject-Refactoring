@@ -1,16 +1,22 @@
 package serverCommunicationHandlers;
 
+import cardManipulation.BankCardTableController;
 import communication.DecryptionRequest;
 import communication.Request;
 import communication.Response;
 import communication.ResponseStatus;
+import serverApp.ServerMessageLogger;
 import userStorage.AccessRights;
+import userStorage.UserLoader;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 public class DecryptionRequestProcessor extends CardRequestProcessor {
-    public DecryptionRequestProcessor(Request request) {
-        super(request);
+    public DecryptionRequestProcessor(Request clientRequest, UserLoader userLoader,
+                                      ObjectOutputStream outputStream, ServerMessageLogger logger,
+                                      String clientName, BankCardTableController cardController) {
+        super(clientRequest, userLoader, outputStream, logger, clientName, cardController);
     }
 
     @Override
