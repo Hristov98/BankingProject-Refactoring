@@ -8,4 +8,8 @@ public abstract class Request implements Serializable {
     Request(RequestType type) {
         this.type = type;
     }
+
+    public RequestType getType() {
+        return type;
+    }
 }

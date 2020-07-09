@@ -1,10 +1,8 @@
 package serverApp;
 
 import cardManipulation.BankCardTableController;
-import communication.DecryptionRequest;
-import communication.EncryptionRequest;
-import communication.LoginRequest;
 import communication.Request;
+import communication.RequestType;
 import javafx.scene.control.TextArea;
 import serverCommunicationHandlers.*;
 import userStorage.UserLoader;
@@ -22,17 +20,26 @@ public class ClientRunnable implements Runnable {
     private final UserLoader userLoader;
     private final BankCardTableController cardController;
     private String clientName;
+    private RequestProcessorFactory factory;
 
     ClientRunnable(Socket connect, UserLoader userLoader,
                    BankCardTableController cardController, TextArea textArea) throws IOException {
         connection = connect;
         setClientName("guest");
+
         outputStream = new ObjectOutputStream(connection.getOutputStream());
         outputStream.flush();
         inputStream = new ObjectInputStream(connection.getInputStream());
+
         this.userLoader = userLoader;
         this.cardController = cardController;
         logger = new ServerMessageLogger(textArea);
+        initialiseFactory();
+    }
+
+    private void initialiseFactory(){
+        factory = new RequestProcessorFactory(null, userLoader, outputStream,
+                logger, clientName, cardController);
     }
 
     private void setClientName(String clientName) {
@@ -66,26 +73,10 @@ public class ClientRunnable implements Runnable {
 
             if (clientRequest instanceof String) {
                 processString((String) clientRequest);
+            } else {
+                processRequest((Request) clientRequest);
             }
-            if (clientRequest instanceof LoginRequest) {
-                RequestProcessor processor = new LoginRequestProcessor((Request) clientRequest,
-                        userLoader, outputStream, logger, clientName);
-                processor.processRequest();
 
-                setClientName(processor.getClientName());
-            }
-            if (clientRequest instanceof EncryptionRequest) {
-                CardRequestProcessor processor = new EncryptionRequestProcessor((Request) clientRequest,
-                        userLoader, outputStream, logger, clientName, cardController);
-
-                processor.processRequest();
-            }
-            if (clientRequest instanceof DecryptionRequest) {
-                CardRequestProcessor processor = new DecryptionRequestProcessor((Request) clientRequest,
-                        userLoader, outputStream, logger, clientName, cardController);
-
-                processor.processRequest();
-            }
         } catch (ClassNotFoundException classNotFoundException) {
             logger.displayMessage(String.format("Error: Unknown object received from %s.", clientName));
             classNotFoundException.printStackTrace();
@@ -94,6 +85,32 @@ public class ClientRunnable implements Runnable {
 
     private void processString(String message) {
         logger.displayMessage(message);
+    }
+
+    private void processRequest(Request clientRequest) throws IOException {
+        factory.setClientRequest(clientRequest);
+        RequestProcessor processor = factory.createRequestProcessor(clientRequest.getType());
+        processor.processRequest();
+
+        if (loginIsSuccessful(clientRequest.getType(),processor)) {
+            factory.setClientName(processor.getClientName());
+            setClientName(processor.getClientName());
+        }
+    }
+
+    private boolean loginIsSuccessful(RequestType requestType,
+                                      RequestProcessor requestProcessor) {
+        //if the request isn't for a login, the first boolean will return false
+        //and we don't need to fear improper casting
+        return isLoginRequest(requestType) && isSuccessful(requestProcessor);
+    }
+
+    private boolean isLoginRequest(RequestType requestType) {
+        return requestType == RequestType.LOGIN;
+    }
+
+    private boolean isSuccessful(RequestProcessor requestProcessor) {
+        return ((LoginRequestProcessor)requestProcessor).isSuccessfulRequest();
     }
 
     private void closeConnection() {

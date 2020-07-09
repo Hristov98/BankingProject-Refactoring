@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public class LoginRequestProcessor extends RequestProcessor {
+    private boolean successfulRequest;
+
     public LoginRequestProcessor(Request clientRequest, UserLoader userLoader,
                                  ObjectOutputStream outputStream, ServerMessageLogger logger, String clientName) {
         super(clientRequest, userLoader, outputStream, logger, clientName);
@@ -45,6 +47,8 @@ public class LoginRequestProcessor extends RequestProcessor {
 
         Response result = new Response(ResponseStatus.SUCCESS, username);
         sendResponseToClient(result);
+
+        successfulRequest = true;
     }
 
     private void notifyClientForFailedLogin(String username) throws IOException {
@@ -53,5 +57,11 @@ public class LoginRequestProcessor extends RequestProcessor {
 
         Response result = new Response(ResponseStatus.FAILURE, errorMessage);
         sendResponseToClient(result);
+
+        successfulRequest = false;
+    }
+
+    public boolean isSuccessfulRequest() {
+        return successfulRequest;
     }
 }
