@@ -1,9 +1,10 @@
-package serverApp;
+package serverApp.server;
 
-import cardManipulation.BankCardTableController;
+import cardManipulation.cardTables.BankCardTableController;
 import communication.Request;
 import communication.RequestType;
 import javafx.scene.control.TextArea;
+import serverApp.ServerMessageLogger;
 import serverCommunicationHandlers.LoginRequestProcessor;
 import serverCommunicationHandlers.RequestProcessor;
 import serverCommunicationHandlers.RequestProcessorFactory;

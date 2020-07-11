@@ -1,6 +1,6 @@
-package serverApp;
+package serverApp.server;
 
-import cardManipulation.BankCardTableController;
+import cardManipulation.cardTables.BankCardTableController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+import serverApp.ServerMessageLogger;
 import userStorage.UserController;
 
 import java.io.File;
@@ -118,7 +119,7 @@ public class ServerController implements Initializable {
 
     private void openRegistrationWindow() throws IOException {
         Stage secondaryStage = new Stage();
-        Parent parent = FXMLLoader.load(getClass().getResource("registration.fxml"));
+        Parent parent = FXMLLoader.load(getClass().getResource("../registration/registration.fxml"));
         secondaryStage.setTitle("Registration menu");
         secondaryStage.setScene(new Scene(parent, 500, 250));
         secondaryStage.show();

@@ -3,6 +3,6 @@ module client {
     requires javafx.fxml;
     requires utilities;
 
-    opens clientApp to javafx.fxml;
-    exports clientApp to javafx.graphics;
+    opens clientApp.client to javafx.fxml;
+    exports clientApp.client to javafx.graphics;
 }

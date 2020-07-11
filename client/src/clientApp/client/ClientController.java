@@ -1,5 +1,6 @@
-package clientApp;
+package clientApp.client;
 
+import clientApp.ClientMessageLogger;
 import clientCommunicationHandlers.ActionHandler;
 import clientCommunicationHandlers.DecryptionHandler;
 import clientCommunicationHandlers.EncryptionHandler;

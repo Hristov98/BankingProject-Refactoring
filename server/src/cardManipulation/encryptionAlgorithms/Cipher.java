@@ -1,4 +1,4 @@
-package cardManipulation;
+package cardManipulation.encryptionAlgorithms;
 
 public interface Cipher {
 

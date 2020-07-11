@@ -1,4 +1,4 @@
-package serverApp;
+package serverApp.server;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

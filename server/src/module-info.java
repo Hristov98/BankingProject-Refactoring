@@ -5,6 +5,6 @@ module server {
     requires utilities;
     requires client;
 
-    opens serverApp to javafx.fxml;
-    exports serverApp to javafx.graphics;
+    opens serverApp.server to javafx.fxml;
+    exports serverApp.server to javafx.graphics;
 }

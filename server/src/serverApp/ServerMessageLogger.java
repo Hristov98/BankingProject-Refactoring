@@ -9,7 +9,7 @@ import java.util.Date;
 public class ServerMessageLogger {
     private final TextArea textAreaLog;
 
-    ServerMessageLogger(TextArea textAreaLog) {
+    public ServerMessageLogger(TextArea textAreaLog) {
         this.textAreaLog = textAreaLog;
     }
 

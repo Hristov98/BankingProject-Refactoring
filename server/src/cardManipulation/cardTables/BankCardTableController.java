@@ -1,4 +1,4 @@
-package cardManipulation;
+package cardManipulation.cardTables;
 
 import java.io.File;
 import java.io.FileNotFoundException;

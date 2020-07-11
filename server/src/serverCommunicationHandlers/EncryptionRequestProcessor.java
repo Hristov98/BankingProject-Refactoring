@@ -1,6 +1,6 @@
 package serverCommunicationHandlers;
 
-import cardManipulation.BankCardTableController;
+import cardManipulation.cardTables.BankCardTableController;
 import communication.EncryptionRequest;
 import communication.Request;
 import communication.Response;

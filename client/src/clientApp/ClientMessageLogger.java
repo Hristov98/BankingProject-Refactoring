@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 public class ClientMessageLogger {
     private final ObjectOutputStream outputStream;
 
-    ClientMessageLogger(ObjectOutputStream outputStream) {
+    public ClientMessageLogger(ObjectOutputStream outputStream) {
         this.outputStream = outputStream;
     }
 

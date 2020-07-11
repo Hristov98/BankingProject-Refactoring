@@ -1,8 +1,8 @@
 package serverCommunicationHandlers;
 
-import cardManipulation.BankCardTableController;
+import cardManipulation.cardTables.BankCardTableController;
 import cardManipulation.CardValidator;
-import cardManipulation.SubstitutionCipher;
+import cardManipulation.encryptionAlgorithms.SubstitutionCipher;
 import communication.Request;
 import communication.Response;
 import communication.ResponseStatus;

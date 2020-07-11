@@ -1,6 +1,6 @@
 package serverCommunicationHandlers;
 
-import cardManipulation.BankCardTableController;
+import cardManipulation.cardTables.BankCardTableController;
 import communication.Request;
 import communication.RequestType;
 import serverApp.ServerMessageLogger;
