@@ -1,7 +1,8 @@
 package serverCommunicationHandlers;
 
-import cardManipulation.cardTables.BankCardTableController;
 import cardManipulation.CardValidator;
+import cardManipulation.cardTables.TableSortedByCardNumber;
+import cardManipulation.cardTables.TableSortedByEncryptedNumber;
 import cardManipulation.encryptionAlgorithms.SubstitutionCipher;
 import communication.Request;
 import communication.Response;
@@ -14,15 +15,12 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public abstract class CardRequestProcessor extends RequestProcessor {
-    private final BankCardTableController cardController;
     protected final SubstitutionCipher cipher;
     protected final CardValidator validator;
 
     public CardRequestProcessor(Request clientRequest, ObjectOutputStream outputStream,
-                                ServerMessageLogger logger, String clientName,
-                                BankCardTableController cardController) {
+                                ServerMessageLogger logger, String clientName) {
         super(clientRequest, outputStream, logger, clientName);
-        this.cardController = cardController;
         cipher = new SubstitutionCipher(5);
         validator = new CardValidator();
     }
@@ -66,8 +64,21 @@ public abstract class CardRequestProcessor extends RequestProcessor {
     }
 
     protected void saveCardPairToTable(String cardNumber, String encryptedNumber) {
-        cardController.addCard(cardNumber, encryptedNumber);
-        cardController.saveSortByCardToFile();
-        cardController.saveSortByEncryptionToFile();
+        updateTableSortedByCardNumber(cardNumber, encryptedNumber);
+        updateTableSortedByEncryptedNumber(cardNumber, encryptedNumber);
+    }
+
+    private void updateTableSortedByCardNumber(String cardNumber, String encryptedNumber) {
+        TableSortedByCardNumber tableSortedByCardNumber = new TableSortedByCardNumber();
+        tableSortedByCardNumber.loadCardTable();
+        tableSortedByCardNumber.addCardToTable(cardNumber, encryptedNumber);
+        tableSortedByCardNumber.saveTableToFile();
+    }
+
+    private void updateTableSortedByEncryptedNumber(String cardNumber, String encryptedNumber) {
+        TableSortedByEncryptedNumber tableSortedByEncryptedNumber = new TableSortedByEncryptedNumber();
+        tableSortedByEncryptedNumber.loadCardTable();
+        tableSortedByEncryptedNumber.addCardToTable(cardNumber, encryptedNumber);
+        tableSortedByEncryptedNumber.saveTableToFile();
     }
 }

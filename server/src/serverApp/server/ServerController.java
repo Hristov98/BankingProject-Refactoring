@@ -1,6 +1,8 @@
 package serverApp.server;
 
-import cardManipulation.cardTables.BankCardTableController;
+import cardManipulation.cardTables.CardTable;
+import cardManipulation.cardTables.TableSortedByCardNumber;
+import cardManipulation.cardTables.TableSortedByEncryptedNumber;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,13 +14,11 @@ import javafx.stage.Stage;
 import serverApp.ServerMessageLogger;
 import userStorage.UserController;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,7 +27,8 @@ public class ServerController implements Initializable {
     private ServerSocket serverSocket;
     private ClientRunnable clientSession;
     private UserController userController;
-    private BankCardTableController cardController;
+    private CardTable tableSortedByCardNumber;
+    private CardTable tableSortedByEncryptedNumber;
     private ServerMessageLogger logger;
 
     @FXML
@@ -36,42 +37,22 @@ public class ServerController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initialiseClassVariables();
-
-        loadCardTableSortedByCardNumber();
-        loadCardTableSortedByEncryptedCardNumber();
+        loadCardTables();
         startServerThread();
     }
 
     private void initialiseClassVariables() {
         executor = Executors.newCachedThreadPool();
-        cardController = new BankCardTableController();
+        tableSortedByCardNumber = new TableSortedByCardNumber();
+        tableSortedByEncryptedNumber = new TableSortedByEncryptedNumber();
         logger = new ServerMessageLogger(textAreaLog);
         userController = new UserController();
         userController.loadUsers();
     }
 
-    private void loadCardTableSortedByCardNumber() {
-        String fileName = "tableSortedByCard.txt";
-        File tableSortedByCard = new File(fileName);
-
-        if (tableSortedByCard.exists()) {
-            cardController.setCardTableSortedByCardNumber(cardController.readSortByCardFromFile());
-            logger.displayMessage(String.format("Successfully loaded %s.", fileName));
-        } else {
-            logger.displayMessage(String.format("WARNING: Could not load %s.", fileName));
-        }
-    }
-
-    private void loadCardTableSortedByEncryptedCardNumber() {
-        String fileName = "tableSortedByEncryption.txt";
-        File tableSortedByEncryption = new File(fileName);
-
-        if (tableSortedByEncryption.exists()) {
-            cardController.setCardTableSortedByEncryptedNumber(cardController.readSortByEncryptionFromFile());
-            logger.displayMessage(String.format("Successfully loaded %s.", fileName));
-        } else {
-            logger.displayMessage(String.format("WARNING: Could not load %s.", fileName));
-        }
+    private void loadCardTables() {
+        tableSortedByCardNumber.loadCardTable();
+        tableSortedByEncryptedNumber.loadCardTable();
     }
 
     private void startServerThread() {
@@ -93,6 +74,7 @@ public class ServerController implements Initializable {
     }
 
     private void listenForClientConnections() throws IOException {
+        logger.displayMessage("Welcome, server administrator.");
         while (true) {
             connectToClient();
             executeSession();
@@ -105,7 +87,7 @@ public class ServerController implements Initializable {
     }
 
     private void initialiseClientSession(Socket clientSocket) throws IOException {
-        clientSession = new ClientRunnable(clientSocket, cardController, textAreaLog);
+        clientSession = new ClientRunnable(clientSocket, textAreaLog);
     }
 
     private void executeSession() {
@@ -143,22 +125,16 @@ public class ServerController implements Initializable {
 
     @FXML
     void clickButtonViewCardsSortedByEncryption() {
-        TreeMap<String, String> table = cardController.readSortByEncryptionFromFile();
-        cardController.setCardTableSortedByEncryptedNumber(table);
-
         logger.displayMessage(String.format("Displaying card table sorted by encryption: \n"
                 + "Card number\t\tEncrypted Number\n"
-                + "%s", cardController.toStringSortedByEncryption()));
+                + "%s", tableSortedByEncryptedNumber.tableToString()));
     }
 
     @FXML
     void clickButtonViewCardsSortedByNumber() {
-        TreeMap<String, String> table = cardController.readSortByCardFromFile();
-        cardController.setCardTableSortedByCardNumber(table);
-
         logger.displayMessage(String.format("Displaying card table sorted by card number: \n"
                 + "Card number\t\tEncrypted Number\n"
-                + "%s", cardController.toStringSortedByCard()));
+                + "%s", tableSortedByCardNumber.tableToString()));
     }
 
     @FXML

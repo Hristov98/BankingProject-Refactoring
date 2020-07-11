@@ -1,6 +1,5 @@
 package serverApp.server;
 
-import cardManipulation.cardTables.BankCardTableController;
 import communication.Request;
 import communication.RequestType;
 import javafx.scene.control.TextArea;
@@ -19,12 +18,10 @@ public class ClientRunnable implements Runnable {
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
     private final ServerMessageLogger logger;
-    private final BankCardTableController cardController;
     private String clientName;
     private RequestProcessorFactory factory;
 
-    ClientRunnable(Socket connect,
-                   BankCardTableController cardController, TextArea textArea) throws IOException {
+    ClientRunnable(Socket connect, TextArea textArea) throws IOException {
         connection = connect;
         setClientName("guest");
 
@@ -32,14 +29,13 @@ public class ClientRunnable implements Runnable {
         outputStream.flush();
         inputStream = new ObjectInputStream(connection.getInputStream());
 
-        this.cardController = cardController;
         logger = new ServerMessageLogger(textArea);
         initialiseFactory();
     }
 
-    private void initialiseFactory(){
+    private void initialiseFactory() {
         factory = new RequestProcessorFactory(null, outputStream,
-                logger, clientName, cardController);
+                logger, clientName);
     }
 
     private void setClientName(String clientName) {
@@ -92,7 +88,7 @@ public class ClientRunnable implements Runnable {
         RequestProcessor processor = factory.createRequestProcessor(clientRequest.getType());
         processor.processRequest();
 
-        if (loginIsSuccessful(clientRequest.getType(),processor)) {
+        if (loginIsSuccessful(clientRequest.getType(), processor)) {
             factory.setClientName(processor.getClientName());
             setClientName(processor.getClientName());
         }
@@ -100,7 +96,7 @@ public class ClientRunnable implements Runnable {
 
     private boolean loginIsSuccessful(RequestType requestType,
                                       RequestProcessor requestProcessor) {
-        //if the request isn't for a login, the first boolean will return false
+        //if the request isn't for a login, the first boolean will return false and end the check
         //so we won't need to fear improper casting from derived RequestProcessor classes
         return isLoginRequest(requestType) && isSuccessful(requestProcessor);
     }
@@ -110,7 +106,7 @@ public class ClientRunnable implements Runnable {
     }
 
     private boolean isSuccessful(RequestProcessor requestProcessor) {
-        return ((LoginRequestProcessor)requestProcessor).isSuccessfulRequest();
+        return ((LoginRequestProcessor) requestProcessor).isSuccessfulRequest();
     }
 
     private void closeConnection() {
