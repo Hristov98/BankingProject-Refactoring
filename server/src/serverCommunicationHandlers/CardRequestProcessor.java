@@ -1,15 +1,14 @@
 package serverCommunicationHandlers;
 
 import cardManipulation.BankCardTableController;
-import cardManipulation.SubstitutionCipher;
 import cardManipulation.CardValidator;
+import cardManipulation.SubstitutionCipher;
 import communication.Request;
 import communication.Response;
 import communication.ResponseStatus;
 import serverApp.ServerMessageLogger;
 import userStorage.AccessRights;
 import userStorage.User;
-import userStorage.UserController;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -19,10 +18,10 @@ public abstract class CardRequestProcessor extends RequestProcessor {
     protected final SubstitutionCipher cipher;
     protected final CardValidator validator;
 
-    public CardRequestProcessor(Request clientRequest, UserController userController,
-                                ObjectOutputStream outputStream, ServerMessageLogger logger,
-                                String clientName, BankCardTableController cardController) {
-        super(clientRequest, userController, outputStream, logger, clientName);
+    public CardRequestProcessor(Request clientRequest, ObjectOutputStream outputStream,
+                                ServerMessageLogger logger, String clientName,
+                                BankCardTableController cardController) {
+        super(clientRequest, outputStream, logger, clientName);
         this.cardController = cardController;
         cipher = new SubstitutionCipher(5);
         validator = new CardValidator();

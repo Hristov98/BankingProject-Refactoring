@@ -7,16 +7,15 @@ import communication.Response;
 import communication.ResponseStatus;
 import serverApp.ServerMessageLogger;
 import userStorage.AccessRights;
-import userStorage.UserController;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public class DecryptionRequestProcessor extends CardRequestProcessor {
-    public DecryptionRequestProcessor(Request clientRequest, UserController userController,
-                                      ObjectOutputStream outputStream, ServerMessageLogger logger,
-                                      String clientName, BankCardTableController cardController) {
-        super(clientRequest, userController, outputStream, logger, clientName, cardController);
+    public DecryptionRequestProcessor(Request clientRequest, ObjectOutputStream outputStream,
+                                      ServerMessageLogger logger, String clientName,
+                                      BankCardTableController cardController) {
+        super(clientRequest, outputStream, logger, clientName, cardController);
     }
 
     @Override

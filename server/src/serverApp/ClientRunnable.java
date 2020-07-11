@@ -7,7 +7,6 @@ import javafx.scene.control.TextArea;
 import serverCommunicationHandlers.LoginRequestProcessor;
 import serverCommunicationHandlers.RequestProcessor;
 import serverCommunicationHandlers.RequestProcessorFactory;
-import userStorage.UserController;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,12 +18,11 @@ public class ClientRunnable implements Runnable {
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
     private final ServerMessageLogger logger;
-    private final UserController userController;
     private final BankCardTableController cardController;
     private String clientName;
     private RequestProcessorFactory factory;
 
-    ClientRunnable(Socket connect, UserController userController,
+    ClientRunnable(Socket connect,
                    BankCardTableController cardController, TextArea textArea) throws IOException {
         connection = connect;
         setClientName("guest");
@@ -33,14 +31,13 @@ public class ClientRunnable implements Runnable {
         outputStream.flush();
         inputStream = new ObjectInputStream(connection.getInputStream());
 
-        this.userController = userController;
         this.cardController = cardController;
         logger = new ServerMessageLogger(textArea);
         initialiseFactory();
     }
 
     private void initialiseFactory(){
-        factory = new RequestProcessorFactory(null, userController, outputStream,
+        factory = new RequestProcessorFactory(null, outputStream,
                 logger, clientName, cardController);
     }
 

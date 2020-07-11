@@ -17,13 +17,15 @@ public abstract class RequestProcessor {
     protected final ServerMessageLogger logger;
     protected String clientName;
 
-    public RequestProcessor(Request clientRequest, UserController userController,
-                            ObjectOutputStream outputStream, ServerMessageLogger logger, String clientName) {
+    public RequestProcessor(Request clientRequest, ObjectOutputStream outputStream,
+                            ServerMessageLogger logger, String clientName) {
         this.clientRequest = clientRequest;
-        this.userController = userController;
         this.outputStream = outputStream;
         this.logger = logger;
         setClientName(clientName);
+
+        userController = new UserController();
+        userController.loadUsers();
     }
 
     public void setClientName(String clientName) {

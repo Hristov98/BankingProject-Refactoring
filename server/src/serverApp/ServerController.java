@@ -104,7 +104,7 @@ public class ServerController implements Initializable {
     }
 
     private void initialiseClientSession(Socket clientSocket) throws IOException {
-        clientSession = new ClientRunnable(clientSocket, userController, cardController, textAreaLog);
+        clientSession = new ClientRunnable(clientSocket, cardController, textAreaLog);
     }
 
     private void executeSession() {
