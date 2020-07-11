@@ -7,7 +7,6 @@ import cardManipulation.encryptionAlgorithms.SubstitutionCipher;
 import communication.Request;
 import communication.Response;
 import communication.ResponseStatus;
-import serverApp.ServerMessageLogger;
 import userStorage.AccessRights;
 import userStorage.User;
 
@@ -19,8 +18,8 @@ public abstract class CardRequestProcessor extends RequestProcessor {
     protected final CardValidator validator;
 
     public CardRequestProcessor(Request clientRequest, ObjectOutputStream outputStream,
-                                ServerMessageLogger logger, String clientName) {
-        super(clientRequest, outputStream, logger, clientName);
+                                String clientName) {
+        super(clientRequest, outputStream, clientName);
         cipher = new SubstitutionCipher(5);
         validator = new CardValidator();
     }

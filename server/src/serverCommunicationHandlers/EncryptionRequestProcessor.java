@@ -4,7 +4,6 @@ import communication.EncryptionRequest;
 import communication.Request;
 import communication.Response;
 import communication.ResponseStatus;
-import serverApp.ServerMessageLogger;
 import userStorage.AccessRights;
 
 import java.io.IOException;
@@ -12,8 +11,8 @@ import java.io.ObjectOutputStream;
 
 public class EncryptionRequestProcessor extends CardRequestProcessor {
     public EncryptionRequestProcessor(Request clientRequest, ObjectOutputStream outputStream,
-                                      ServerMessageLogger logger, String clientName) {
-        super(clientRequest, outputStream, logger, clientName);
+                                      String clientName) {
+        super(clientRequest, outputStream, clientName);
     }
 
     @Override
@@ -31,12 +30,14 @@ public class EncryptionRequestProcessor extends CardRequestProcessor {
 
     @Override
     public String getCardNumberFromRequest() {
-        return ((EncryptionRequest) clientRequest).getCardNumber().replaceAll(" ", "");
+        return ((EncryptionRequest) clientRequest).getCardNumber()
+                .replaceAll(" ", "");
     }
 
     @Override
     public boolean cardNumberIsValid(String cardNumber) {
-        return validator.cardNumberIsValidByLuhn(cardNumber) && validator.decryptedCardNumberIsValid(cardNumber);
+        return validator.cardNumberIsValidByLuhn(cardNumber)
+                && validator.decryptedCardNumberIsValid(cardNumber);
     }
 
     @Override
@@ -53,7 +54,6 @@ public class EncryptionRequestProcessor extends CardRequestProcessor {
 
     @Override
     public void returnCardNumberToClient(String encryptedNumber) throws IOException {
-        logger.displayMessage(String.format("Sending %s back to %s", encryptedNumber, clientName));
         Response result = new Response(ResponseStatus.SUCCESS, encryptedNumber);
         sendResponseToClient(result);
     }

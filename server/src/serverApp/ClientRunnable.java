@@ -3,7 +3,6 @@ package serverApp;
 import communication.Request;
 import communication.RequestType;
 import javafx.scene.control.TextArea;
-import serverApp.ServerMessageLogger;
 import serverCommunicationHandlers.LoginRequestProcessor;
 import serverCommunicationHandlers.RequestProcessor;
 import serverCommunicationHandlers.RequestProcessorFactory;
@@ -35,7 +34,7 @@ public class ClientRunnable implements Runnable {
 
     private void initialiseFactory() {
         factory = new RequestProcessorFactory(null, outputStream,
-                logger, clientName);
+                clientName);
     }
 
     private void setClientName(String clientName) {

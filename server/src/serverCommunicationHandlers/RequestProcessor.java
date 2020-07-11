@@ -2,7 +2,6 @@ package serverCommunicationHandlers;
 
 import communication.Request;
 import communication.Response;
-import serverApp.ServerMessageLogger;
 import userStorage.User;
 import userStorage.UserController;
 
@@ -14,14 +13,12 @@ public abstract class RequestProcessor {
     private final ObjectOutputStream outputStream;
     protected final Request clientRequest;
     protected final UserController userController;
-    protected final ServerMessageLogger logger;
     protected String clientName;
 
     public RequestProcessor(Request clientRequest, ObjectOutputStream outputStream,
-                            ServerMessageLogger logger, String clientName) {
+                            String clientName) {
         this.clientRequest = clientRequest;
         this.outputStream = outputStream;
-        this.logger = logger;
         setClientName(clientName);
 
         userController = new UserController();

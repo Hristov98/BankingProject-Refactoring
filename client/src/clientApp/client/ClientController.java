@@ -102,7 +102,7 @@ public class ClientController implements Initializable {
 
     @FXML
     void clickButtonContinue() throws IOException {
-        logger.displayMessageOnServer("Sending login request from client to server.");
+        logger.displayMessageOnServer("Received login request from client to server.");
 
         ActionHandler loginHandler = new LoginHandler(username.getText(), password.getText());
         loginHandler.sendRequestToServer(outputStream);
@@ -129,7 +129,7 @@ public class ClientController implements Initializable {
 
     @FXML
     void clickButtonEncryptCardNumber() throws IOException {
-        logger.displayMessageOnServer(String.format("Sending encryption request from %s.", username.getText()));
+        logger.displayMessageOnServer(String.format("Received encryption request from %s.", username.getText()));
 
         ActionHandler encryptionHandler = new EncryptionHandler(decryptedNumber.getText());
         encryptionHandler.sendRequestToServer(outputStream);
@@ -146,7 +146,7 @@ public class ClientController implements Initializable {
 
     @FXML
     void clickButtonDecryptCardNumber() throws IOException {
-        logger.displayMessageOnServer(String.format("Sending decryption request from %s.", username.getText()));
+        logger.displayMessageOnServer(String.format("Received decryption request from %s.", username.getText()));
 
         ActionHandler decryptionHandler = new DecryptionHandler(encryptedNumber.getText());
         decryptionHandler.sendRequestToServer(outputStream);

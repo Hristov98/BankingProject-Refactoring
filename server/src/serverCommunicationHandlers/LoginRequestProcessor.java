@@ -4,7 +4,6 @@ import communication.LoginRequest;
 import communication.Request;
 import communication.Response;
 import communication.ResponseStatus;
-import serverApp.ServerMessageLogger;
 import userStorage.User;
 
 import java.io.IOException;
@@ -14,8 +13,8 @@ public class LoginRequestProcessor extends RequestProcessor {
     private boolean successfulRequest;
 
     public LoginRequestProcessor(Request clientRequest, ObjectOutputStream outputStream,
-                                 ServerMessageLogger logger, String clientName) {
-        super(clientRequest, outputStream, logger, clientName);
+                                 String clientName) {
+        super(clientRequest, outputStream, clientName);
     }
 
     @Override
@@ -26,7 +25,7 @@ public class LoginRequestProcessor extends RequestProcessor {
         if (userExists(username, password)) {
             notifyClientForSuccessfulLogin(username);
         } else {
-            notifyClientForFailedLogin(username);
+            notifyClientForFailedLogin();
         }
     }
 
@@ -41,19 +40,15 @@ public class LoginRequestProcessor extends RequestProcessor {
     }
 
     private void notifyClientForSuccessfulLogin(String username) throws IOException {
-        logger.displayMessage(String.format("Logging in user %s.", username));
         setClientName(username);
-
         Response result = new Response(ResponseStatus.SUCCESS, username);
         sendResponseToClient(result);
 
         successfulRequest = true;
     }
 
-    private void notifyClientForFailedLogin(String username) throws IOException {
-        logger.displayMessage(String.format("User %s could not be found.", username));
+    private void notifyClientForFailedLogin() throws IOException {
         String errorMessage = "You have entered an incorrect name and/or password.";
-
         Response result = new Response(ResponseStatus.FAILURE, errorMessage);
         sendResponseToClient(result);
 
