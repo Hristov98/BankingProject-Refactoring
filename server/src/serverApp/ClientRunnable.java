@@ -4,7 +4,9 @@ import cardManipulation.BankCardTableController;
 import communication.Request;
 import communication.RequestType;
 import javafx.scene.control.TextArea;
-import serverCommunicationHandlers.*;
+import serverCommunicationHandlers.LoginRequestProcessor;
+import serverCommunicationHandlers.RequestProcessor;
+import serverCommunicationHandlers.RequestProcessorFactory;
 import userStorage.UserLoader;
 
 import java.io.IOException;
@@ -101,7 +103,7 @@ public class ClientRunnable implements Runnable {
     private boolean loginIsSuccessful(RequestType requestType,
                                       RequestProcessor requestProcessor) {
         //if the request isn't for a login, the first boolean will return false
-        //and we don't need to fear improper casting
+        //so we won't need to fear improper casting from derived RequestProcessor classes
         return isLoginRequest(requestType) && isSuccessful(requestProcessor);
     }
 

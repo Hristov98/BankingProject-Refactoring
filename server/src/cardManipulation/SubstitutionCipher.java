@@ -1,47 +1,80 @@
 package cardManipulation;
 
-public class SubstitutionCipher {
+public class SubstitutionCipher implements Cipher {
     private int cipherKey;
 
-    public SubstitutionCipher(int offset) {
-        setCipherKey(offset);
-    }
-
-    public void setCipherKey(int cipherKey) {
+    public SubstitutionCipher(int cipherKey) {
         this.cipherKey = cipherKey;
     }
 
-    public void increment() {
-        cipherKey++;
-    }
+    public String encryptCardNumber(String plainText) {
+        char[] cardNumberDigits = plainText.toCharArray();
+        char[] encryptedDigits = new char[cardNumberDigits.length];
 
-    public String encrypt(String plainText) {
-        char[] plainTextArray = plainText.toCharArray();
-        char[] encryptedText = new char[plainTextArray.length];
-
-        for (int i = 0; i < encryptedText.length; i++) {
-            if ((int) plainTextArray[i] - '0' + cipherKey > 9) {
-                encryptedText[i] = (char) ((int) plainTextArray[i] + cipherKey - 10);
-            } else {
-                encryptedText[i] = (char) (plainTextArray[i] + cipherKey);
-            }
+        for (int i = 0; i < encryptedDigits.length; i++) {
+            encryptedDigits[i] = encryptSymbol(cardNumberDigits[i]);
         }
 
-        return new String(encryptedText);
+        return new String(encryptedDigits);
     }
 
-    public String decrypt(String encryptedText) {
-        char[] encryptedTextArray = encryptedText.toCharArray();
-        char[] decryptedText = new char[encryptedTextArray.length];
+    private char encryptSymbol(char oldSymbol) {
+        char newSymbol;
 
-        for (int i = 0; i < decryptedText.length; i++) {
-            if ((int) encryptedTextArray[i] - '0' - cipherKey < 0) {
-                decryptedText[i] = (char) ((int) encryptedTextArray[i] - cipherKey + 10);
-            } else {
-                decryptedText[i] = (char) (encryptedTextArray[i] - cipherKey);
-            }
+        if (encryptionLeadsToOverflow(oldSymbol)) {
+            newSymbol = encryptOverflowingSymbol(oldSymbol);
+        } else {
+            newSymbol = encryptRegularSymbol(oldSymbol);
         }
 
-        return new String(decryptedText);
+        return newSymbol;
     }
+
+    private boolean encryptionLeadsToOverflow(char symbol) {
+        return (int) symbol - '0' + cipherKey > 9;
+    }
+
+    private char encryptOverflowingSymbol(char symbol) {
+        return (char) ((int) symbol + cipherKey - 10);
+    }
+
+    private char encryptRegularSymbol(char symbol) {
+        return (char) (symbol + cipherKey);
+    }
+
+    public String decryptCardNumber(String encryptedCardNumber) {
+        char[] encryptedDigits = encryptedCardNumber.toCharArray();
+        char[] decryptedDigits = new char[encryptedDigits.length];
+
+        for (int i = 0; i < decryptedDigits.length; i++) {
+            decryptedDigits[i] = decryptSymbol(encryptedDigits[i]);
+        }
+
+        return new String(decryptedDigits);
+    }
+
+    private char decryptSymbol(char oldSymbol) {
+        char newSymbol;
+
+        if (decryptionLeadsToUnderflow(oldSymbol)) {
+            newSymbol = decryptUnderflowingSymbol(oldSymbol);
+        } else {
+            newSymbol = decryptRegularSymbol(oldSymbol);
+        }
+
+        return newSymbol;
+    }
+
+    private boolean decryptionLeadsToUnderflow(char symbol) {
+        return (int) symbol - '0' - cipherKey < 0;
+    }
+
+    private char decryptUnderflowingSymbol(char symbol) {
+        return (char) ((int) symbol - cipherKey + 10);
+    }
+
+    private char decryptRegularSymbol(char symbol) {
+        return (char) (symbol - cipherKey);
+    }
+
 }

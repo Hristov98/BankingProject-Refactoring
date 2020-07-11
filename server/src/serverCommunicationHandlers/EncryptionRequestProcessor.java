@@ -51,7 +51,7 @@ public class EncryptionRequestProcessor extends CardRequestProcessor {
 
     @Override
     public String getModifiedCard(String cardNumber) {
-        return cipher.encrypt(cardNumber);
+        return cipher.encryptCardNumber(cardNumber);
     }
 
     @Override
