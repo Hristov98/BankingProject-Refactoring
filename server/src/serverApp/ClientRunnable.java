@@ -1,4 +1,4 @@
-package serverApp.server;
+package serverApp;
 
 import communication.Request;
 import communication.RequestType;

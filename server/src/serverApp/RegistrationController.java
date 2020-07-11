@@ -1,4 +1,4 @@
-package serverApp.registration;
+package serverApp;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
