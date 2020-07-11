@@ -4,7 +4,7 @@ import communication.Request;
 import communication.Response;
 import serverApp.ServerMessageLogger;
 import userStorage.User;
-import userStorage.UserLoader;
+import userStorage.UserController;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -13,14 +13,14 @@ import java.util.HashSet;
 public abstract class RequestProcessor {
     private final ObjectOutputStream outputStream;
     protected final Request clientRequest;
-    protected final UserLoader userLoader;
+    protected final UserController userController;
     protected final ServerMessageLogger logger;
     protected String clientName;
 
-    public RequestProcessor(Request clientRequest, UserLoader userLoader,
+    public RequestProcessor(Request clientRequest, UserController userController,
                             ObjectOutputStream outputStream, ServerMessageLogger logger, String clientName) {
         this.clientRequest = clientRequest;
-        this.userLoader = userLoader;
+        this.userController = userController;
         this.outputStream = outputStream;
         this.logger = logger;
         setClientName(clientName);
@@ -37,7 +37,7 @@ public abstract class RequestProcessor {
     public abstract void processRequest() throws IOException;
 
     protected User findUserByName(String username) {
-        HashSet<User> users = userLoader.getRegisteredUsers().getUsers();
+        HashSet<User> users = userController.getRegisteredUsers().getUsers();
 
         for (User user : users) {
             if (username.equals(user.getUsername())) {

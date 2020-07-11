@@ -1,10 +1,7 @@
-# fmiCC-BankingProject-Refactoring
-Project for FMI's Clean Code course whose goal is the refactoring of the Multi-Threaded Client-Server application developed in FMI's OOP with Java course.
-
+# Multi-Threaded Client-Server Project Refactoring
 TODO list:
 1) Refactor BankCardController
 2) Fix tight coupling issue in server module which occurred as a result of refactoring
-3) Combine UserLoader and UserRegistrator due to overlapping functionality
 
 
 Future expansion ideas:

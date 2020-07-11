@@ -9,7 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
-import userStorage.UserLoader;
+import userStorage.UserController;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class ServerController implements Initializable {
     private ExecutorService executor;
     private ServerSocket serverSocket;
     private ClientRunnable clientSession;
-    private UserLoader userLoader;
+    private UserController userController;
     private BankCardTableController cardController;
     private ServerMessageLogger logger;
 
@@ -35,7 +35,7 @@ public class ServerController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initialiseClassVariables();
-        userLoader.loadUsers();
+
         loadCardTableSortedByCardNumber();
         loadCardTableSortedByEncryptedCardNumber();
         startServerThread();
@@ -45,7 +45,8 @@ public class ServerController implements Initializable {
         executor = Executors.newCachedThreadPool();
         cardController = new BankCardTableController();
         logger = new ServerMessageLogger(textAreaLog);
-        userLoader = new UserLoader(logger);
+        userController = new UserController();
+        userController.loadUsers();
     }
 
     private void loadCardTableSortedByCardNumber() {
@@ -103,7 +104,7 @@ public class ServerController implements Initializable {
     }
 
     private void initialiseClientSession(Socket clientSocket) throws IOException {
-        clientSession = new ClientRunnable(clientSocket, userLoader, cardController, textAreaLog);
+        clientSession = new ClientRunnable(clientSocket, userController, cardController, textAreaLog);
     }
 
     private void executeSession() {
@@ -131,8 +132,8 @@ public class ServerController implements Initializable {
     @FXML
     void clickButtonUpdateAndDisplayUsers() {
         try {
-            userLoader.loadUsers();
-            logger.displayMessage(userLoader.getRegisteredUsers().toString());
+            userController.loadUsers();
+            logger.displayMessage(userController.getRegisteredUsers().toString());
         } catch (NullPointerException nullPointerException) {
             logger.displayMessage("Error: Could not find file to update.");
             nullPointerException.printStackTrace();

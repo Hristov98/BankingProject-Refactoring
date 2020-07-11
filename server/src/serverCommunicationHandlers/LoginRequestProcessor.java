@@ -6,7 +6,7 @@ import communication.Response;
 import communication.ResponseStatus;
 import serverApp.ServerMessageLogger;
 import userStorage.User;
-import userStorage.UserLoader;
+import userStorage.UserController;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -14,9 +14,9 @@ import java.io.ObjectOutputStream;
 public class LoginRequestProcessor extends RequestProcessor {
     private boolean successfulRequest;
 
-    public LoginRequestProcessor(Request clientRequest, UserLoader userLoader,
+    public LoginRequestProcessor(Request clientRequest, UserController userController,
                                  ObjectOutputStream outputStream, ServerMessageLogger logger, String clientName) {
-        super(clientRequest, userLoader, outputStream, logger, clientName);
+        super(clientRequest, userController, outputStream, logger, clientName);
     }
 
     @Override

@@ -5,14 +5,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import userStorage.AccessRights;
-import userStorage.UserRegistrator;
+import userStorage.UserController;
 
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class RegistrationController implements Initializable, Serializable {
-    private UserRegistrator userRegistrator;
+    private UserController registrator;
 
     @FXML
     private TextField username;
@@ -36,14 +36,13 @@ public class RegistrationController implements Initializable, Serializable {
     }
 
     private void initialiseUserRegistrator() {
-        userRegistrator = new UserRegistrator();
+        registrator = new UserController();
     }
 
     @FXML
     void clickButtonAddUser() {
         AccessRights accessRights = getAccessRights();
-        userRegistrator.setUserData(username.getText(), password.getText(), accessRights);
-        userRegistrator.addUserToServer();
+        registrator.addUserToServer(username.getText(), password.getText(), accessRights);
         comboBoxAccessRights.getScene().getWindow().hide();
     }
 

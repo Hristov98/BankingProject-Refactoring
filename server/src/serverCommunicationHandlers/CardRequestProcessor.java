@@ -9,7 +9,7 @@ import communication.ResponseStatus;
 import serverApp.ServerMessageLogger;
 import userStorage.AccessRights;
 import userStorage.User;
-import userStorage.UserLoader;
+import userStorage.UserController;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -19,10 +19,10 @@ public abstract class CardRequestProcessor extends RequestProcessor {
     protected final SubstitutionCipher cipher;
     protected final CardValidator validator;
 
-    public CardRequestProcessor(Request clientRequest, UserLoader userLoader,
+    public CardRequestProcessor(Request clientRequest, UserController userController,
                                 ObjectOutputStream outputStream, ServerMessageLogger logger,
                                 String clientName, BankCardTableController cardController) {
-        super(clientRequest, userLoader, outputStream, logger, clientName);
+        super(clientRequest, userController, outputStream, logger, clientName);
         this.cardController = cardController;
         cipher = new SubstitutionCipher(5);
         validator = new CardValidator();

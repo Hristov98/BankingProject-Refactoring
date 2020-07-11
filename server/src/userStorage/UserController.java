@@ -4,14 +4,9 @@ import serverApp.ServerMessageLogger;
 
 import java.io.*;
 
-public class UserLoader {
+public class UserController {
     private final String USER_FILE_NAME = "users.ser";
     private UserWrapper registeredUsers;
-    private ServerMessageLogger logger;
-
-    public UserLoader(ServerMessageLogger logger) {
-        this.logger = logger;
-    }
 
     public UserWrapper getRegisteredUsers() {
         return registeredUsers;
@@ -24,10 +19,10 @@ public class UserLoader {
             setRegisteredUsers(users);
             inputStream.close();
         } catch (IOException ioException) {
-            logger.displayMessage("Error: Could not load users.");
+            System.err.println("Error: Could not load users.");
             ioException.printStackTrace();
         } catch (ClassNotFoundException unknownClassException) {
-            logger.displayMessage("Error: Unknown object loaded.\n");
+            System.err.println("Error: Unknown object loaded.\n");
             unknownClassException.printStackTrace();
         }
     }
@@ -36,21 +31,21 @@ public class UserLoader {
         File userFile = new File(USER_FILE_NAME);
 
         if (!userFile.exists()) {
-            logger.displayMessage("WARNING: User file does not exist. Creating empty user file.");
+            System.err.println("WARNING: User file does not exist. Creating empty user file.");
             userFile.createNewFile();
-            saveEmptyContainerToFile();
+            saveUsersToFile(new UserWrapper());
         }
 
         return new ObjectInputStream(new FileInputStream(USER_FILE_NAME));
     }
 
-    private void saveEmptyContainerToFile() {
+    private void saveUsersToFile(UserWrapper users) {
         try {
             ObjectOutputStream outputStream = openUserFileToWrite();
-            outputStream.writeObject(new UserWrapper());
+            outputStream.writeObject(users);
             outputStream.close();
         } catch (IOException ioException) {
-            logger.displayMessage("Error: Could not save empty container to file.");
+            System.err.println("Error: Could not save empty container to file.");
             ioException.printStackTrace();
         }
     }
@@ -61,5 +56,16 @@ public class UserLoader {
 
     private void setRegisteredUsers(UserWrapper users) {
         registeredUsers = new UserWrapper(users);
+    }
+
+    public void addUserToServer(String username, String password, AccessRights rights) {
+        User newUser = new User(username, password, rights);
+        addUser(newUser);
+    }
+
+    private void addUser(User user) {
+        loadUsers();
+        registeredUsers.addUser(user);
+        saveUsersToFile(registeredUsers);
     }
 }

@@ -7,16 +7,16 @@ import communication.Response;
 import communication.ResponseStatus;
 import serverApp.ServerMessageLogger;
 import userStorage.AccessRights;
-import userStorage.UserLoader;
+import userStorage.UserController;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public class EncryptionRequestProcessor extends CardRequestProcessor {
-    public EncryptionRequestProcessor(Request clientRequest, UserLoader userLoader,
+    public EncryptionRequestProcessor(Request clientRequest, UserController userController,
                                       ObjectOutputStream outputStream, ServerMessageLogger logger,
                                       String clientName, BankCardTableController cardController) {
-        super(clientRequest, userLoader, outputStream, logger, clientName, cardController);
+        super(clientRequest, userController, outputStream, logger, clientName, cardController);
     }
 
     @Override
