@@ -39,7 +39,7 @@ public class DecryptionRequestProcessor extends CardRequestProcessor {
 
     @Override
     public boolean cardNumberIsValid(String cardNumber) {
-        return validator.validationByRegexEncrypted(cardNumber);
+        return validator.encryptedCardNumberIsValid(cardNumber);
     }
 
     @Override
