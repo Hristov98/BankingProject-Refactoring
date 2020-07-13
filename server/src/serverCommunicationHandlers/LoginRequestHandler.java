@@ -9,11 +9,11 @@ import userStorage.User;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-public class LoginRequestProcessor extends RequestProcessor {
+public class LoginRequestHandler extends RequestHandler {
     private boolean successfulRequest;
 
-    public LoginRequestProcessor(Request clientRequest, ObjectOutputStream outputStream,
-                                 String clientName) {
+    public LoginRequestHandler(Request clientRequest, ObjectOutputStream outputStream,
+                               String clientName) {
         super(clientRequest, outputStream, clientName);
     }
 

@@ -14,22 +14,19 @@ public abstract class ActionHandler {
     protected Request requestToServer;
     protected Response response;
 
-    public String getResponseMessage() {
-        return response.getReturnedMessage();
-    }
+    public abstract boolean processResponseFromServer(ObjectInputStream inputStream,
+                                                      ClientMessageLogger logger);
 
     public void sendRequestToServer(ObjectOutputStream outputStream) throws IOException {
         outputStream.writeObject(requestToServer);
         outputStream.flush();
     }
 
-    public abstract boolean processResponseFromServer(ObjectInputStream inputStream, ClientMessageLogger logger);
-
     protected Response getResponseFromServer(ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
         return (Response) inputStream.readObject();
     }
 
-    protected boolean isResponseValid(Response response) {
+    protected boolean isResponseValid() {
         if (isSuccessful(response)) {
             return true;
         } else {
@@ -47,5 +44,9 @@ public abstract class ActionHandler {
         failedLoginAlert.setTitle("Error window");
         failedLoginAlert.setHeaderText(failureMessage);
         failedLoginAlert.show();
+    }
+
+    public String getResponseMessage() {
+        return response.getReturnedMessage();
     }
 }

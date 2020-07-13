@@ -1,4 +1,4 @@
-package clientApp.client;
+package clientApp;
 
 import clientApp.ClientMessageLogger;
 import clientCommunicationHandlers.ActionHandler;
@@ -20,10 +20,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ClientController implements Initializable {
+    private Socket clientSocket;
     private ObjectInputStream inputStream;
     private ObjectOutputStream outputStream;
     private String clientNetworkAddress;
-    private Socket clientSocket;
     private ClientMessageLogger logger;
 
     @FXML

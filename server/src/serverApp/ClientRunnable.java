@@ -3,9 +3,9 @@ package serverApp;
 import communication.Request;
 import communication.RequestType;
 import javafx.scene.control.TextArea;
-import serverCommunicationHandlers.LoginRequestProcessor;
-import serverCommunicationHandlers.RequestProcessor;
-import serverCommunicationHandlers.RequestProcessorFactory;
+import serverCommunicationHandlers.LoginRequestHandler;
+import serverCommunicationHandlers.RequestHandler;
+import serverCommunicationHandlers.RequestHandlerFactory;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,7 +18,7 @@ public class ClientRunnable implements Runnable {
     private final ObjectOutputStream outputStream;
     private final ServerMessageLogger logger;
     private String clientName;
-    private RequestProcessorFactory factory;
+    private RequestHandlerFactory factory;
 
     ClientRunnable(Socket connect, TextArea textArea) throws IOException {
         connection = connect;
@@ -33,7 +33,7 @@ public class ClientRunnable implements Runnable {
     }
 
     private void initialiseFactory() {
-        factory = new RequestProcessorFactory(null, outputStream,
+        factory = new RequestHandlerFactory(null, outputStream,
                 clientName);
     }
 
@@ -84,7 +84,7 @@ public class ClientRunnable implements Runnable {
 
     private void processRequest(Request clientRequest) throws IOException {
         factory.setClientRequest(clientRequest);
-        RequestProcessor processor = factory.createRequestProcessor(clientRequest.getType());
+        RequestHandler processor = factory.createRequestProcessor(clientRequest.getType());
         processor.processRequest();
 
         if (loginIsSuccessful(clientRequest.getType(), processor)) {
@@ -94,18 +94,18 @@ public class ClientRunnable implements Runnable {
     }
 
     private boolean loginIsSuccessful(RequestType requestType,
-                                      RequestProcessor requestProcessor) {
+                                      RequestHandler requestHandler) {
         //if the request isn't for a login, the first boolean will return false and end the check
         //so we won't need to fear improper casting from derived RequestProcessor classes
-        return isLoginRequest(requestType) && isSuccessful(requestProcessor);
+        return isLoginRequest(requestType) && isSuccessful(requestHandler);
     }
 
     private boolean isLoginRequest(RequestType requestType) {
         return requestType == RequestType.LOGIN;
     }
 
-    private boolean isSuccessful(RequestProcessor requestProcessor) {
-        return ((LoginRequestProcessor) requestProcessor).isSuccessfulRequest();
+    private boolean isSuccessful(RequestHandler requestHandler) {
+        return ((LoginRequestHandler) requestHandler).isSuccessfulRequest();
     }
 
     private void closeConnection() {

@@ -13,12 +13,12 @@ import userStorage.User;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-public abstract class CardRequestProcessor extends RequestProcessor {
+public abstract class CardRequestHandler extends RequestHandler {
     protected final SubstitutionCipher cipher;
     protected final CardValidator validator;
 
-    public CardRequestProcessor(Request clientRequest, ObjectOutputStream outputStream,
-                                String clientName) {
+    public CardRequestHandler(Request clientRequest, ObjectOutputStream outputStream,
+                              String clientName) {
         super(clientRequest, outputStream, clientName);
         cipher = new SubstitutionCipher(5);
         validator = new CardValidator();

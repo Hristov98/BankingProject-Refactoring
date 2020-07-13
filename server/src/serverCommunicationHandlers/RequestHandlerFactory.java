@@ -5,13 +5,13 @@ import communication.RequestType;
 
 import java.io.ObjectOutputStream;
 
-public class RequestProcessorFactory {
+public class RequestHandlerFactory {
     private final ObjectOutputStream outputStream;
     private Request clientRequest;
     private String clientName;
 
-    public RequestProcessorFactory(Request clientRequest, ObjectOutputStream outputStream,
-                                   String clientName) {
+    public RequestHandlerFactory(Request clientRequest, ObjectOutputStream outputStream,
+                                 String clientName) {
         this.clientRequest = clientRequest;
         this.outputStream = outputStream;
         this.clientName = clientName;
@@ -25,16 +25,16 @@ public class RequestProcessorFactory {
         this.clientName = clientName;
     }
 
-    public RequestProcessor createRequestProcessor(RequestType type) {
+    public RequestHandler createRequestProcessor(RequestType type) {
         switch (type) {
             case LOGIN: {
-                return new LoginRequestProcessor(clientRequest, outputStream, clientName);
+                return new LoginRequestHandler(clientRequest, outputStream, clientName);
             }
             case ENCRYPTION: {
-                return new EncryptionRequestProcessor(clientRequest, outputStream, clientName);
+                return new EncryptionRequestHandler(clientRequest, outputStream, clientName);
             }
             case DECRYPTION: {
-                return new DecryptionRequestProcessor(clientRequest, outputStream, clientName);
+                return new DecryptionRequestHandler(clientRequest, outputStream, clientName);
             }
             default: {
                 return null;

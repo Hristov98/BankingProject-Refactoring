@@ -9,14 +9,14 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.HashSet;
 
-public abstract class RequestProcessor {
+public abstract class RequestHandler {
     private final ObjectOutputStream outputStream;
     protected final Request clientRequest;
     protected final UserController userController;
     protected String clientName;
 
-    public RequestProcessor(Request clientRequest, ObjectOutputStream outputStream,
-                            String clientName) {
+    public RequestHandler(Request clientRequest, ObjectOutputStream outputStream,
+                          String clientName) {
         this.clientRequest = clientRequest;
         this.outputStream = outputStream;
         setClientName(clientName);

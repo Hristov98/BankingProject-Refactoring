@@ -9,9 +9,9 @@ import userStorage.AccessRights;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-public class DecryptionRequestProcessor extends CardRequestProcessor {
-    public DecryptionRequestProcessor(Request clientRequest, ObjectOutputStream outputStream,
-                                      String clientName) {
+public class DecryptionRequestHandler extends CardRequestHandler {
+    public DecryptionRequestHandler(Request clientRequest, ObjectOutputStream outputStream,
+                                    String clientName) {
         super(clientRequest, outputStream, clientName);
     }
 
