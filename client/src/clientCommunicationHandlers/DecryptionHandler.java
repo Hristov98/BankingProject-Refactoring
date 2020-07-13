@@ -1,6 +1,5 @@
 package clientCommunicationHandlers;
 
-import clientApp.ClientMessageLogger;
 import communication.DecryptionRequest;
 
 import java.io.IOException;
@@ -12,15 +11,15 @@ public class DecryptionHandler extends ActionHandler {
     }
 
     @Override
-    public boolean processResponseFromServer(ObjectInputStream inputStream, ClientMessageLogger logger) {
+    public boolean processResponseFromServer(ObjectInputStream inputStream) {
         try {
             response = getResponseFromServer(inputStream);
             return isResponseValid();
         } catch (IOException ioException) {
-            logger.displayMessageOnServer("Input/Output error during card decryption.");
+            System.err.println("Input/Output error during card decryption.");
             ioException.printStackTrace();
         } catch (ClassNotFoundException unknownClassException) {
-            logger.displayMessageOnServer("Unknown object received during card decryption.");
+            System.err.println("Unknown object received during card decryption.");
             unknownClassException.printStackTrace();
         }
 

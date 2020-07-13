@@ -17,8 +17,7 @@ public abstract class CardRequestHandler extends RequestHandler {
     protected final SubstitutionCipher cipher;
     protected final CardValidator validator;
 
-    public CardRequestHandler(Request clientRequest, ObjectOutputStream outputStream,
-                              String clientName) {
+    public CardRequestHandler(Request clientRequest, ObjectOutputStream outputStream, String clientName) {
         super(clientRequest, outputStream, clientName);
         cipher = new SubstitutionCipher(5);
         validator = new CardValidator();

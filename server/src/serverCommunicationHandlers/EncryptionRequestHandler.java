@@ -10,8 +10,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public class EncryptionRequestHandler extends CardRequestHandler {
-    public EncryptionRequestHandler(Request clientRequest, ObjectOutputStream outputStream,
-                                    String clientName) {
+    public EncryptionRequestHandler(Request clientRequest, ObjectOutputStream outputStream, String clientName) {
         super(clientRequest, outputStream, clientName);
     }
 

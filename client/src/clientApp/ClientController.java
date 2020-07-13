@@ -104,7 +104,7 @@ public class ClientController implements Initializable {
 
         ActionHandler loginHandler = new LoginHandler(username.getText(), password.getText());
         loginHandler.sendRequestToServer(outputStream);
-        boolean isLoginResponseValid = loginHandler.processResponseFromServer(inputStream, logger);
+        boolean isLoginResponseValid = loginHandler.processResponseFromServer(inputStream);
 
         if (isLoginResponseValid) {
             logInUser();
@@ -127,12 +127,11 @@ public class ClientController implements Initializable {
 
     @FXML
     void clickButtonEncryptCardNumber() throws IOException {
-        logger.displayMessageOnServer(String.format("Received encryption request from %s.",
-                username.getText()));
+        logger.displayMessageOnServer(String.format("Received encryption request from %s.", username.getText()));
 
         ActionHandler encryptionHandler = new EncryptionHandler(decryptedNumber.getText());
         encryptionHandler.sendRequestToServer(outputStream);
-        boolean isEncryptionResponseValid = encryptionHandler.processResponseFromServer(inputStream, logger);
+        boolean isEncryptionResponseValid = encryptionHandler.processResponseFromServer(inputStream);
 
         if (isEncryptionResponseValid) {
             setEncryptedCardNumber(encryptionHandler.getResponseMessage());
@@ -145,12 +144,11 @@ public class ClientController implements Initializable {
 
     @FXML
     void clickButtonDecryptCardNumber() throws IOException {
-        logger.displayMessageOnServer(String.format("Received decryption request from %s.",
-                username.getText()));
+        logger.displayMessageOnServer(String.format("Received decryption request from %s.", username.getText()));
 
         ActionHandler decryptionHandler = new DecryptionHandler(encryptedNumber.getText());
         decryptionHandler.sendRequestToServer(outputStream);
-        boolean isDecryptionResponseValid = decryptionHandler.processResponseFromServer(inputStream, logger);
+        boolean isDecryptionResponseValid = decryptionHandler.processResponseFromServer(inputStream);
 
         if (isDecryptionResponseValid) {
             setDecryptedCardNumber(decryptionHandler.getResponseMessage());

@@ -10,8 +10,7 @@ public class RequestHandlerFactory {
     private Request clientRequest;
     private String clientName;
 
-    public RequestHandlerFactory(Request clientRequest, ObjectOutputStream outputStream,
-                                 String clientName) {
+    public RequestHandlerFactory(Request clientRequest, ObjectOutputStream outputStream, String clientName) {
         this.clientRequest = clientRequest;
         this.outputStream = outputStream;
         this.clientName = clientName;

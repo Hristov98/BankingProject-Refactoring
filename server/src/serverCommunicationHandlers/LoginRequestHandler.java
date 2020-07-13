@@ -12,8 +12,7 @@ import java.io.ObjectOutputStream;
 public class LoginRequestHandler extends RequestHandler {
     private boolean successfulRequest;
 
-    public LoginRequestHandler(Request clientRequest, ObjectOutputStream outputStream,
-                               String clientName) {
+    public LoginRequestHandler(Request clientRequest, ObjectOutputStream outputStream, String clientName) {
         super(clientRequest, outputStream, clientName);
     }
 

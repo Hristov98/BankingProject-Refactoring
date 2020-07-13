@@ -15,8 +15,7 @@ public abstract class RequestHandler {
     protected final UserController userController;
     protected String clientName;
 
-    public RequestHandler(Request clientRequest, ObjectOutputStream outputStream,
-                          String clientName) {
+    public RequestHandler(Request clientRequest, ObjectOutputStream outputStream, String clientName) {
         this.clientRequest = clientRequest;
         this.outputStream = outputStream;
         setClientName(clientName);
