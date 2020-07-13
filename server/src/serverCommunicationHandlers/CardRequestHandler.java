@@ -28,7 +28,7 @@ public abstract class CardRequestHandler extends RequestHandler {
 
     public abstract boolean cardNumberIsValid(String cardNumber);
 
-    public abstract void processSuccessfulRequest(String cardNumber) throws IOException;
+    public abstract void processValidRequest(String cardNumber) throws IOException;
 
     public abstract String getModifiedCard(String cardNumber);
 

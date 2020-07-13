@@ -1,7 +1,5 @@
 package userStorage;
 
-import serverApp.ServerMessageLogger;
-
 import java.io.*;
 
 public class UserController {

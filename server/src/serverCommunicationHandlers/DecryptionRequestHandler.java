@@ -10,8 +10,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public class DecryptionRequestHandler extends CardRequestHandler {
-    public DecryptionRequestHandler(Request clientRequest, ObjectOutputStream outputStream,
-                                    String clientName) {
+    public DecryptionRequestHandler(Request clientRequest, ObjectOutputStream outputStream, String clientName) {
         super(clientRequest, outputStream, clientName);
     }
 
@@ -19,12 +18,22 @@ public class DecryptionRequestHandler extends CardRequestHandler {
     public void processRequest() throws IOException {
         String encryptedNumber = getCardNumberFromRequest();
 
-        if (!cardNumberIsValid(encryptedNumber)) {
-            notifyClientForInvalidCardNumber(encryptedNumber);
-        } else if (!userHasValidAccessRights(clientName, AccessRights.DECRYPTION)) {
+        if (requestIsValid(encryptedNumber)) {
+            processValidRequest(encryptedNumber);
+        } else {
+            notifyUserForInvalidRequest(encryptedNumber);
+        }
+    }
+
+    private boolean requestIsValid(String encryptedNumber) {
+        return cardNumberIsValid(encryptedNumber) && userHasValidAccessRights(clientName, AccessRights.DECRYPTION);
+    }
+
+    private void notifyUserForInvalidRequest(String encryptedNumber) throws IOException {
+        if (!userHasValidAccessRights(clientName, AccessRights.DECRYPTION)) {
             notifyClientForInvalidRights("decryption");
         } else {
-            processSuccessfulRequest(encryptedNumber);
+            notifyClientForInvalidCardNumber(encryptedNumber);
         }
     }
 
@@ -40,7 +49,7 @@ public class DecryptionRequestHandler extends CardRequestHandler {
     }
 
     @Override
-    public void processSuccessfulRequest(String cardNumber) throws IOException {
+    public void processValidRequest(String cardNumber) throws IOException {
         String decryptedNumber = getModifiedCard(cardNumber);
         returnCardNumberToClient(decryptedNumber);
         saveCardPairToTable(decryptedNumber, cardNumber);

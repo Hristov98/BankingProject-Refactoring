@@ -14,8 +14,7 @@ public abstract class ActionHandler {
     protected Request requestToServer;
     protected Response response;
 
-    public abstract boolean processResponseFromServer(ObjectInputStream inputStream,
-                                                      ClientMessageLogger logger);
+    public abstract boolean processResponseFromServer(ObjectInputStream inputStream, ClientMessageLogger logger);
 
     public void sendRequestToServer(ObjectOutputStream outputStream) throws IOException {
         outputStream.writeObject(requestToServer);

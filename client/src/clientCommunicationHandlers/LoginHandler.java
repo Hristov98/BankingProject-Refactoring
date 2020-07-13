@@ -12,8 +12,7 @@ public class LoginHandler extends ActionHandler {
     }
 
     @Override
-    public boolean processResponseFromServer(ObjectInputStream inputStream,
-                                             ClientMessageLogger logger) {
+    public boolean processResponseFromServer(ObjectInputStream inputStream, ClientMessageLogger logger) {
         try {
             response = getResponseFromServer(inputStream);
             return isResponseValid();

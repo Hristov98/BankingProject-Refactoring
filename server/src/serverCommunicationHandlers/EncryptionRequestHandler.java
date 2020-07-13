@@ -19,12 +19,22 @@ public class EncryptionRequestHandler extends CardRequestHandler {
     public void processRequest() throws IOException {
         String cardNumber = getCardNumberFromRequest();
 
-        if (!cardNumberIsValid(cardNumber)) {
-            notifyClientForInvalidCardNumber(cardNumber);
-        } else if (!userHasValidAccessRights(clientName, AccessRights.ENCRYPTION)) {
+        if (requestIsValid(cardNumber)) {
+            processValidRequest(cardNumber);
+        } else {
+            notifyUserForInvalidRequest(cardNumber);
+        }
+    }
+
+    private boolean requestIsValid(String encryptedNumber) {
+        return cardNumberIsValid(encryptedNumber) && userHasValidAccessRights(clientName, AccessRights.ENCRYPTION);
+    }
+
+    private void notifyUserForInvalidRequest(String encryptedNumber) throws IOException {
+        if (!userHasValidAccessRights(clientName, AccessRights.ENCRYPTION)) {
             notifyClientForInvalidRights("encryption");
         } else {
-            processSuccessfulRequest(cardNumber);
+            notifyClientForInvalidCardNumber(encryptedNumber);
         }
     }
 
@@ -41,7 +51,7 @@ public class EncryptionRequestHandler extends CardRequestHandler {
     }
 
     @Override
-    public void processSuccessfulRequest(String cardNumber) throws IOException {
+    public void processValidRequest(String cardNumber) throws IOException {
         String encryptedCard = getModifiedCard(cardNumber);
         returnCardNumberToClient(encryptedCard);
         saveCardPairToTable(cardNumber, encryptedCard);

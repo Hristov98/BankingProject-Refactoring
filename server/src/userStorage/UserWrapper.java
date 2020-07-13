@@ -26,10 +26,6 @@ public class UserWrapper implements Serializable {
         users.add(user);
     }
 
-    public boolean contains(User user) {
-        return users.contains(user);
-    }
-
     @Override
     public String toString() {
         return "User container:\n" + users;

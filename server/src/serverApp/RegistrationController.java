@@ -26,17 +26,13 @@ public class RegistrationController implements Initializable, Serializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initialiseComboBox();
-        initialiseUserRegistrator();
+        registrator = new UserController();
     }
 
     private void initialiseComboBox() {
         comboBoxAccessRights.getItems().removeAll(comboBoxAccessRights.getItems());
         comboBoxAccessRights.getItems().addAll("ENCRYPTION", "DECRYPTION", "FULL_ACCESS");
         comboBoxAccessRights.getSelectionModel().select("ENCRYPTION");
-    }
-
-    private void initialiseUserRegistrator() {
-        registrator = new UserController();
     }
 
     @FXML

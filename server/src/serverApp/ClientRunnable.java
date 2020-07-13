@@ -67,7 +67,7 @@ public class ClientRunnable implements Runnable {
             Object clientRequest = inputStream.readObject();
 
             if (clientRequest instanceof String) {
-                processString((String) clientRequest);
+                displayMessageOnTextLog((String) clientRequest);
             } else {
                 processRequest((Request) clientRequest);
             }
@@ -78,7 +78,7 @@ public class ClientRunnable implements Runnable {
         }
     }
 
-    private void processString(String message) {
+    private void displayMessageOnTextLog(String message) {
         logger.displayMessage(message);
     }
 

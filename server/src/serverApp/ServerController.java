@@ -42,11 +42,12 @@ public class ServerController implements Initializable {
 
     private void initialiseClassVariables() {
         executor = Executors.newCachedThreadPool();
+        userController = new UserController();
+        userController.loadUsers();
+
         tableSortedByCardNumber = new TableSortedByCardNumber();
         tableSortedByEncryptedNumber = new TableSortedByEncryptedNumber();
         logger = new ServerMessageLogger(textAreaLog);
-        userController = new UserController();
-        userController.loadUsers();
     }
 
     private void loadCardTables() {
@@ -74,6 +75,7 @@ public class ServerController implements Initializable {
 
     private void listenForClientConnections() throws IOException {
         logger.displayMessage("Welcome, server administrator.");
+
         while (true) {
             connectToClient();
             executeSession();
