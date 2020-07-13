@@ -14,6 +14,7 @@ public class ClientMessageLogger {
         try {
             sendMessageToServer(message);
         } catch (IOException ioException) {
+            System.err.println("Error: Could not send message to server's log.");
             ioException.printStackTrace();
         }
     }

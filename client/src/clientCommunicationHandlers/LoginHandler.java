@@ -24,6 +24,7 @@ public class LoginHandler extends ActionHandler {
             logger.displayMessageOnServer("Unknown object received during client login.");
             unknownClassException.printStackTrace();
         }
+
         return false;
     }
 }

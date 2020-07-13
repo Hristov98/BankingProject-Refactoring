@@ -24,6 +24,7 @@ public class DecryptionHandler extends ActionHandler {
             logger.displayMessageOnServer("Unknown object received during card decryption.");
             unknownClassException.printStackTrace();
         }
+
         return false;
     }
 }

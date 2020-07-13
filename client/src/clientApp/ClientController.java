@@ -1,6 +1,5 @@
 package clientApp;
 
-import clientApp.ClientMessageLogger;
 import clientCommunicationHandlers.ActionHandler;
 import clientCommunicationHandlers.DecryptionHandler;
 import clientCommunicationHandlers.EncryptionHandler;
@@ -23,7 +22,6 @@ public class ClientController implements Initializable {
     private Socket clientSocket;
     private ObjectInputStream inputStream;
     private ObjectOutputStream outputStream;
-    private String clientNetworkAddress;
     private ClientMessageLogger logger;
 
     @FXML
@@ -84,7 +82,7 @@ public class ClientController implements Initializable {
     }
 
     private void connectToServer() throws IOException {
-        clientSocket = new Socket(InetAddress.getByName(clientNetworkAddress), 12345);
+        clientSocket = new Socket(InetAddress.getByName(""), 12345);
     }
 
     private void initialiseInputStream() throws IOException {
@@ -102,7 +100,7 @@ public class ClientController implements Initializable {
 
     @FXML
     void clickButtonContinue() throws IOException {
-        logger.displayMessageOnServer("Received login request from client to server.");
+        logger.displayMessageOnServer("Received login request from client.");
 
         ActionHandler loginHandler = new LoginHandler(username.getText(), password.getText());
         loginHandler.sendRequestToServer(outputStream);
@@ -114,11 +112,11 @@ public class ClientController implements Initializable {
     }
 
     private void logInUser() {
-        moveUserToEncryptionDecryptionTab();
+        moveUserToEncryptionTab();
         hideLoginTab();
     }
 
-    private void moveUserToEncryptionDecryptionTab() {
+    private void moveUserToEncryptionTab() {
         labelLoggedInUsername.setText(username.getText());
         tabEncryption.setDisable(false);
     }
@@ -129,7 +127,8 @@ public class ClientController implements Initializable {
 
     @FXML
     void clickButtonEncryptCardNumber() throws IOException {
-        logger.displayMessageOnServer(String.format("Received encryption request from %s.", username.getText()));
+        logger.displayMessageOnServer(String.format("Received encryption request from %s.",
+                username.getText()));
 
         ActionHandler encryptionHandler = new EncryptionHandler(decryptedNumber.getText());
         encryptionHandler.sendRequestToServer(outputStream);
@@ -146,7 +145,8 @@ public class ClientController implements Initializable {
 
     @FXML
     void clickButtonDecryptCardNumber() throws IOException {
-        logger.displayMessageOnServer(String.format("Received decryption request from %s.", username.getText()));
+        logger.displayMessageOnServer(String.format("Received decryption request from %s.",
+                username.getText()));
 
         ActionHandler decryptionHandler = new DecryptionHandler(encryptedNumber.getText());
         decryptionHandler.sendRequestToServer(outputStream);

@@ -27,7 +27,7 @@ public abstract class ActionHandler {
     }
 
     protected boolean isResponseValid() {
-        if (isSuccessful(response)) {
+        if (isSuccessful()) {
             return true;
         } else {
             alertUserForFailedAction(getResponseMessage());
@@ -35,7 +35,7 @@ public abstract class ActionHandler {
         }
     }
 
-    private boolean isSuccessful(Response response) {
+    private boolean isSuccessful() {
         return response.getStatus() == ResponseStatus.SUCCESS;
     }
 
