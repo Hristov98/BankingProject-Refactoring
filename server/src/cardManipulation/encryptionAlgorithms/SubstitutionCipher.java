@@ -4,7 +4,7 @@ public class SubstitutionCipher implements Cipher {
     private int cipherKey;
 
     public SubstitutionCipher(int cipherKey) {
-        this.cipherKey = cipherKey;
+        this.cipherKey = cipherKey % 10;
     }
 
     public String encryptCardNumber(String plainText) {
