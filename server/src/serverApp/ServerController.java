@@ -42,7 +42,7 @@ public class ServerController implements Initializable {
 
     private void initialiseClassVariables() {
         executor = Executors.newCachedThreadPool();
-        userController = new UserController();
+        userController = new UserController("users.ser");
         userController.loadUsers();
 
         tableSortedByCardNumber = new TableSortedByCardNumber();

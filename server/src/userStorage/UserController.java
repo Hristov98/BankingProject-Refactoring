@@ -3,8 +3,12 @@ package userStorage;
 import java.io.*;
 
 public class UserController {
-    private final String USER_FILE_NAME = "users.ser";
+    private final String USER_FILE_NAME;
     private UserWrapper registeredUsers;
+
+    public UserController(String userFile) {
+        USER_FILE_NAME = userFile;
+    }
 
     public UserWrapper getRegisteredUsers() {
         return registeredUsers;

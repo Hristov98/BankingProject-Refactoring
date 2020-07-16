@@ -26,7 +26,7 @@ public class RegistrationController implements Initializable, Serializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initialiseComboBox();
-        registrator = new UserController();
+        registrator = new UserController("users.ser");
     }
 
     private void initialiseComboBox() {

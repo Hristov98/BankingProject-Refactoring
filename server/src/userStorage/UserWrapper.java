@@ -1,29 +1,52 @@
 package userStorage;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.ArrayList;
 
 public class UserWrapper implements Serializable {
-    private HashSet<User> users;
+    private ArrayList<User> users;
 
     public UserWrapper() {
-        users = new HashSet<>();
+        users = new ArrayList<>();
     }
 
     public UserWrapper(UserWrapper userWrapper) {
         setUsers(userWrapper.getUsers());
     }
 
-    public HashSet<User> getUsers() {
-        return new HashSet<>(users);
+    public ArrayList<User> getUsers() {
+        return new ArrayList<>(users);
     }
 
-    public void setUsers(HashSet<User> users) {
-        this.users = new HashSet<>(users);
+    public void setUsers(ArrayList<User> users) {
+        this.users = new ArrayList<>(users);
     }
 
     public void addUser(User user) {
-        users.add(user);
+        if (doesNotContain(user)) {
+            users.add(user);
+        } else {
+            System.err.println("Error: The entered username or password already exist.");
+        }
+    }
+
+    private boolean doesNotContain(User newUser) {
+        for (User registeredUser : users) {
+            if (usernameAlreadyExists(registeredUser,newUser)
+                    || passwordAlreadyExists(registeredUser,newUser)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean usernameAlreadyExists(User registeredUser, User newUser) {
+        return registeredUser.getUsername().equals(newUser.getUsername());
+    }
+
+    private boolean passwordAlreadyExists(User registeredUser, User newUser) {
+        return registeredUser.getPassword().equals(newUser.getPassword());
     }
 
     @Override

@@ -7,6 +7,7 @@ import userStorage.UserController;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public abstract class RequestHandler {
@@ -20,7 +21,7 @@ public abstract class RequestHandler {
         this.outputStream = outputStream;
         setClientName(clientName);
 
-        userController = new UserController();
+        userController = new UserController("users.ser");
         userController.loadUsers();
     }
 
@@ -35,7 +36,7 @@ public abstract class RequestHandler {
     public abstract void processRequest() throws IOException;
 
     protected User findUserByName(String username) {
-        HashSet<User> users = userController.getRegisteredUsers().getUsers();
+        ArrayList<User> users = userController.getRegisteredUsers().getUsers();
 
         for (User user : users) {
             if (username.equals(user.getUsername())) {
