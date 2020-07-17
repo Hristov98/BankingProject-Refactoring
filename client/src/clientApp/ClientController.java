@@ -104,10 +104,16 @@ public class ClientController implements Initializable {
 
         ActionHandler loginHandler = new LoginHandler(username.getText(), password.getText());
         loginHandler.sendRequestToServer(outputStream);
-        boolean isLoginResponseValid = loginHandler.processResponseFromServer(inputStream);
+        processLoginResponse(loginHandler);
+    }
 
-        if (isLoginResponseValid) {
+    private void processLoginResponse(ActionHandler handler){
+        boolean loginIsSuccessful = handler.processResponseFromServer(inputStream);
+
+        if (loginIsSuccessful) {
             logInUser();
+        } else {
+            alertUserForFailedAction(handler.getResponseMessage());
         }
     }
 
@@ -125,16 +131,29 @@ public class ClientController implements Initializable {
         tabMenu.getTabs().remove(0);
     }
 
+    private void alertUserForFailedAction(String failureMessage) {
+        Alert failedLoginAlert = new Alert(Alert.AlertType.ERROR);
+        failedLoginAlert.setTitle("Error window");
+        failedLoginAlert.setHeaderText(failureMessage);
+        failedLoginAlert.show();
+    }
+
     @FXML
     void clickButtonEncryptCardNumber() throws IOException {
         logger.displayMessageOnServer(String.format("Received encryption request from %s.", username.getText()));
 
         ActionHandler encryptionHandler = new EncryptionHandler(decryptedNumber.getText());
         encryptionHandler.sendRequestToServer(outputStream);
-        boolean isEncryptionResponseValid = encryptionHandler.processResponseFromServer(inputStream);
+        processEncryptionResponse(encryptionHandler);
+    }
 
-        if (isEncryptionResponseValid) {
-            setEncryptedCardNumber(encryptionHandler.getResponseMessage());
+    private void processEncryptionResponse(ActionHandler handler){
+        boolean encryptionIsSuccessful = handler.processResponseFromServer(inputStream);
+
+        if (encryptionIsSuccessful) {
+            setEncryptedCardNumber(handler.getResponseMessage());
+        } else {
+            alertUserForFailedAction(handler.getResponseMessage());
         }
     }
 
@@ -148,10 +167,16 @@ public class ClientController implements Initializable {
 
         ActionHandler decryptionHandler = new DecryptionHandler(encryptedNumber.getText());
         decryptionHandler.sendRequestToServer(outputStream);
-        boolean isDecryptionResponseValid = decryptionHandler.processResponseFromServer(inputStream);
+        processDecryptionResponse(decryptionHandler);
+    }
 
-        if (isDecryptionResponseValid) {
-            setDecryptedCardNumber(decryptionHandler.getResponseMessage());
+    private void processDecryptionResponse(ActionHandler handler){
+        boolean decryptionIsSuccessful = handler.processResponseFromServer(inputStream);
+
+        if (decryptionIsSuccessful) {
+            setDecryptedCardNumber(handler.getResponseMessage());
+        } else {
+            alertUserForFailedAction(handler.getResponseMessage());
         }
     }
 

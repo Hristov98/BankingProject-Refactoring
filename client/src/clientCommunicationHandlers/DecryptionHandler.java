@@ -14,7 +14,7 @@ public class DecryptionHandler extends ActionHandler {
     public boolean processResponseFromServer(ObjectInputStream inputStream) {
         try {
             response = getResponseFromServer(inputStream);
-            return isResponseValid();
+            return responseIsSuccessful();
         } catch (IOException ioException) {
             System.err.println("Input/Output error during card decryption.");
             ioException.printStackTrace();

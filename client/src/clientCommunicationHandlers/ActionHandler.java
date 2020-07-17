@@ -3,7 +3,6 @@ package clientCommunicationHandlers;
 import communication.Request;
 import communication.Response;
 import communication.ResponseStatus;
-import javafx.scene.control.Alert;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,24 +23,8 @@ public abstract class ActionHandler {
         return (Response) inputStream.readObject();
     }
 
-    protected boolean isResponseValid() {
-        if (isSuccessful()) {
-            return true;
-        } else {
-            alertUserForFailedAction(getResponseMessage());
-            return false;
-        }
-    }
-
-    private boolean isSuccessful() {
+    public boolean responseIsSuccessful() {
         return response.getStatus() == ResponseStatus.SUCCESS;
-    }
-
-    private void alertUserForFailedAction(String failureMessage) {
-        Alert failedLoginAlert = new Alert(Alert.AlertType.ERROR);
-        failedLoginAlert.setTitle("Error window");
-        failedLoginAlert.setHeaderText(failureMessage);
-        failedLoginAlert.show();
     }
 
     public String getResponseMessage() {
