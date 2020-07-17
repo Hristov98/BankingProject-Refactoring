@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public class DecryptionRequestHandler extends CardRequestHandler {
-    @Override
     protected boolean requestIsValid(Request clientRequest) {
         String cardNumber = getCardNumberFromRequest(clientRequest);
         String username = getUsernameFromRequest(clientRequest);
@@ -15,12 +14,10 @@ public class DecryptionRequestHandler extends CardRequestHandler {
         return cardNumberInputIsValid(cardNumber) && userHasValidAccessRights(username, AccessRights.DECRYPTION);
     }
 
-    @Override
     protected boolean cardNumberInputIsValid(String cardNumber) {
         return validator.encryptedCardNumberIsValid(cardNumber);
     }
 
-    @Override
     protected String getModifiedCard(String cardNumber) {
         return cipher.decryptCardNumber(cardNumber);
     }

@@ -23,14 +23,14 @@ public class UserWrapper implements Serializable {
     }
 
     public void addUser(User user) {
-        if (doesNotContain(user)) {
+        if (doesNotContainUser(user)) {
             users.add(user);
         } else {
             System.err.println("Error: The entered username or password already exist.");
         }
     }
 
-    private boolean doesNotContain(User newUser) {
+    private boolean doesNotContainUser(User newUser) {
         for (User registeredUser : users) {
             if (usernameAlreadyExists(registeredUser,newUser)
                     || passwordAlreadyExists(registeredUser,newUser)) {

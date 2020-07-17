@@ -24,7 +24,7 @@ public class CardValidator {
         int digitSum = 0;
 
         for (int i = cardLength - 1; i >= 0; i--) {
-            int currentDigit = transformCharToInt(digits[i]);
+            int currentDigit = transformCharacterToInteger(digits[i]);
 
             if (digitIsAtEvenPosition(i, cardLength)) {
                 currentDigit = doubleDigit(currentDigit);
@@ -37,7 +37,7 @@ public class CardValidator {
         return digitSum;
     }
 
-    private int transformCharToInt(char digit){
+    private int transformCharacterToInteger(char digit){
         return (int) digit - '0';
     }
 

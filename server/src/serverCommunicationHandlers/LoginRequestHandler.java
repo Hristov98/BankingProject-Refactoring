@@ -12,7 +12,6 @@ import java.io.ObjectOutputStream;
 public class LoginRequestHandler extends RequestHandler {
     private boolean requestIsSuccessful;
 
-    @Override
     public void processRequest(Request clientRequest, ObjectOutputStream outputStream) throws IOException {
         String username = ((LoginRequest) clientRequest).getUsername();
         String password = ((LoginRequest) clientRequest).getPassword();

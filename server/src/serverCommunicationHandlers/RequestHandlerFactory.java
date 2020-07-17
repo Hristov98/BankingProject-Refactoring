@@ -3,7 +3,7 @@ package serverCommunicationHandlers;
 import communication.RequestType;
 
 public class RequestHandlerFactory {
-    public RequestHandler createRequestProcessor(RequestType type) {
+    public RequestHandler createRequestHandler(RequestType type) {
         switch (type) {
             case LOGIN: {
                 return new LoginRequestHandler();

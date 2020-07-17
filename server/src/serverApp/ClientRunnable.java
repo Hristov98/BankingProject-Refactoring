@@ -18,7 +18,7 @@ public class ClientRunnable implements Runnable {
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
     private final ServerMessageLogger logger;
-    private RequestHandlerFactory factory;
+    private final RequestHandlerFactory factory;
     private String clientName;
 
     ClientRunnable(Socket connect, TextArea textArea) throws IOException {
@@ -79,16 +79,15 @@ public class ClientRunnable implements Runnable {
     }
 
     private void processRequest(Request clientRequest) throws IOException {
-        RequestHandler processor = factory.createRequestProcessor(clientRequest.getType());
-        processor.processRequest(clientRequest,outputStream);
+        RequestHandler handler = factory.createRequestHandler(clientRequest.getType());
+        handler.processRequest(clientRequest, outputStream);
 
-        if (loginIsSuccessful(clientRequest.getType(), processor)) {
-            setClientName(((LoginRequest)clientRequest).getUsername());
+        if (loginIsSuccessful(clientRequest.getType(), handler)) {
+            setClientName(((LoginRequest) clientRequest).getUsername());
         }
     }
 
-    private boolean loginIsSuccessful(RequestType requestType,
-                                      RequestHandler requestHandler) {
+    private boolean loginIsSuccessful(RequestType requestType, RequestHandler requestHandler) {
         return isLoginRequest(requestType) && isSuccessful(requestHandler);
     }
 

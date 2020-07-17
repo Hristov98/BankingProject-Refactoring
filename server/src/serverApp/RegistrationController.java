@@ -37,13 +37,21 @@ public class RegistrationController implements Initializable, Serializable {
 
     @FXML
     void clickButtonAddUser() {
+        addUserFromInterfaceInput();
+        closeWindow();
+    }
+    
+    private void addUserFromInterfaceInput(){
         AccessRights accessRights = getAccessRights();
         registrator.addUserToServer(username.getText(), password.getText(), accessRights);
-        comboBoxAccessRights.getScene().getWindow().hide();
     }
 
     private AccessRights getAccessRights() {
         return AccessRights.valueOf(comboBoxAccessRights.getValue());
+    }
+
+    private void closeWindow(){
+        comboBoxAccessRights.getScene().getWindow().hide();
     }
 
     @FXML

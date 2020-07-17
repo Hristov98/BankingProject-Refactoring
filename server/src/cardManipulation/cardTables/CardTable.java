@@ -11,7 +11,7 @@ public abstract class CardTable {
     protected final String fileName;
     protected TreeMap<String, String> table;
 
-    public CardTable(String fileName){
+    public CardTable(String fileName) {
         this.fileName = fileName;
         table = new TreeMap<>();
     }

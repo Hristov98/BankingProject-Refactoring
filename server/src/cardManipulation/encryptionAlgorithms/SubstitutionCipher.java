@@ -1,7 +1,7 @@
 package cardManipulation.encryptionAlgorithms;
 
 public class SubstitutionCipher implements Cipher {
-    private int cipherKey;
+    private final int cipherKey;
 
     public SubstitutionCipher(int cipherKey) {
         this.cipherKey = cipherKey % 10;

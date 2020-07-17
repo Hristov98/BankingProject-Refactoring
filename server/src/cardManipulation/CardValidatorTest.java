@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CardValidatorTest {
-    private CardValidator validator = new CardValidator();
+    private final CardValidator validator = new CardValidator();
 
     @Test
     void testDecryptedCardNumberIsValid() {

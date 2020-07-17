@@ -32,13 +32,17 @@ public class UserController {
     private ObjectInputStream openUserFileToRead() throws IOException {
         File userFile = new File(USER_FILE_NAME);
 
-        if (!userFile.exists()) {
+        if (fileDoesNotExist(userFile)) {
             System.err.println("WARNING: User file does not exist. Creating empty user file.");
             userFile.createNewFile();
             saveUsersToFile(new UserWrapper());
         }
 
         return new ObjectInputStream(new FileInputStream(USER_FILE_NAME));
+    }
+
+    private boolean fileDoesNotExist(File file){
+        return !file.exists();
     }
 
     private void saveUsersToFile(UserWrapper users) {

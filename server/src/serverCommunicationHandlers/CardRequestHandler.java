@@ -23,7 +23,6 @@ public abstract class CardRequestHandler extends RequestHandler {
         validator = new CardValidator();
     }
 
-    @Override
     public void processRequest(Request clientRequest, ObjectOutputStream outputStream) throws IOException {
         if (requestIsValid(clientRequest)) {
             processValidRequest(clientRequest, outputStream);
@@ -77,6 +76,7 @@ public abstract class CardRequestHandler extends RequestHandler {
     private void updateTableSortedByCardNumber(String cardNumber, String encryptedNumber) {
         TableSortedByCardNumber tableSortedByCardNumber = new TableSortedByCardNumber();
         tableSortedByCardNumber.loadCardTable();
+
         tableSortedByCardNumber.addCardToTable(cardNumber, encryptedNumber);
         tableSortedByCardNumber.saveTableToFile();
     }
@@ -84,6 +84,7 @@ public abstract class CardRequestHandler extends RequestHandler {
     private void updateTableSortedByEncryptedNumber(String cardNumber, String encryptedNumber) {
         TableSortedByEncryptedNumber tableSortedByEncryptedNumber = new TableSortedByEncryptedNumber();
         tableSortedByEncryptedNumber.loadCardTable();
+
         tableSortedByEncryptedNumber.addCardToTable(cardNumber, encryptedNumber);
         tableSortedByEncryptedNumber.saveTableToFile();
     }
