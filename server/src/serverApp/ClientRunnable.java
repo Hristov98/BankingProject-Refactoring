@@ -1,5 +1,6 @@
 package serverApp;
 
+import communication.LoginRequest;
 import communication.Request;
 import communication.RequestType;
 import javafx.scene.control.TextArea;
@@ -17,8 +18,8 @@ public class ClientRunnable implements Runnable {
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
     private final ServerMessageLogger logger;
-    private String clientName;
     private RequestHandlerFactory factory;
+    private String clientName;
 
     ClientRunnable(Socket connect, TextArea textArea) throws IOException {
         connection = connect;
@@ -29,12 +30,7 @@ public class ClientRunnable implements Runnable {
         inputStream = new ObjectInputStream(connection.getInputStream());
 
         logger = new ServerMessageLogger(textArea);
-        initialiseFactory();
-    }
-
-    private void initialiseFactory() {
-        factory = new RequestHandlerFactory(null,
-                clientName);
+        factory = new RequestHandlerFactory();
     }
 
     private void setClientName(String clientName) {
@@ -83,13 +79,11 @@ public class ClientRunnable implements Runnable {
     }
 
     private void processRequest(Request clientRequest) throws IOException {
-        factory.setClientRequest(clientRequest);
         RequestHandler processor = factory.createRequestProcessor(clientRequest.getType());
-        processor.processRequest(outputStream);
+        processor.processRequest(clientRequest,outputStream);
 
         if (loginIsSuccessful(clientRequest.getType(), processor)) {
-            factory.setClientName(processor.getClientName());
-            setClientName(processor.getClientName());
+            setClientName(((LoginRequest)clientRequest).getUsername());
         }
     }
 
@@ -103,7 +97,7 @@ public class ClientRunnable implements Runnable {
     }
 
     private boolean isSuccessful(RequestHandler requestHandler) {
-        return ((LoginRequestHandler) requestHandler).isSuccessfulRequest();
+        return ((LoginRequestHandler) requestHandler).isRequestSuccessful();
     }
 
     private void closeConnection() {

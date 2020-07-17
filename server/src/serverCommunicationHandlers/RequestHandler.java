@@ -10,27 +10,14 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public abstract class RequestHandler {
-    protected final Request clientRequest;
     protected final UserController userController;
-    protected String clientName;
 
-    public RequestHandler(Request clientRequest, String clientName) {
-        this.clientRequest = clientRequest;
-        setClientName(clientName);
-
+    public RequestHandler() {
         userController = new UserController("users.ser");
         userController.loadUsers();
     }
 
-    public void setClientName(String clientName) {
-        this.clientName = clientName;
-    }
-
-    public String getClientName() {
-        return clientName;
-    }
-
-    public abstract void processRequest(ObjectOutputStream outputStream) throws IOException;
+    public abstract void processRequest(Request clientRequest, ObjectOutputStream outputStream) throws IOException;
 
     protected User findUserByName(String username) {
         ArrayList<User> users = userController.getRegisteredUsers().getUsers();

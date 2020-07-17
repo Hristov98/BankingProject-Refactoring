@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 public class EncryptionHandler extends ActionHandler {
-    public EncryptionHandler(String cardNumber) {
-        requestToServer = new EncryptionRequest(cardNumber);
+    public EncryptionHandler(String cardNumber, String userSendingRequest) {
+        requestToServer = new EncryptionRequest(cardNumber, userSendingRequest);
     }
 
     @Override

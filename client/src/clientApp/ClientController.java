@@ -142,7 +142,8 @@ public class ClientController implements Initializable {
     void clickButtonEncryptCardNumber() throws IOException {
         logger.displayMessageOnServer(String.format("Received encryption request from %s.", username.getText()));
 
-        ActionHandler encryptionHandler = new EncryptionHandler(decryptedNumber.getText());
+        ActionHandler encryptionHandler =
+                new EncryptionHandler(decryptedNumber.getText(),labelLoggedInUsername.getText());
         encryptionHandler.sendRequestToServer(outputStream);
         processEncryptionResponse(encryptionHandler);
     }
@@ -165,7 +166,8 @@ public class ClientController implements Initializable {
     void clickButtonDecryptCardNumber() throws IOException {
         logger.displayMessageOnServer(String.format("Received decryption request from %s.", username.getText()));
 
-        ActionHandler decryptionHandler = new DecryptionHandler(encryptedNumber.getText());
+        ActionHandler decryptionHandler =
+                new DecryptionHandler(encryptedNumber.getText(),labelLoggedInUsername.getText());
         decryptionHandler.sendRequestToServer(outputStream);
         processDecryptionResponse(decryptionHandler);
     }

@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 public class DecryptionHandler extends ActionHandler {
-    public DecryptionHandler(String cardNumber) {
-        requestToServer = new DecryptionRequest(cardNumber);
+    public DecryptionHandler(String cardNumber, String userSendingRequest) {
+        requestToServer = new DecryptionRequest(cardNumber, userSendingRequest);
     }
 
     @Override

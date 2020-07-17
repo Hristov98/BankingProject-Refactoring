@@ -10,37 +10,27 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public class DecryptionRequestHandler extends CardRequestHandler {
-    public DecryptionRequestHandler(Request clientRequest, String clientName) {
-        super(clientRequest, clientName);
-    }
-
     @Override
-    public void processRequest(ObjectOutputStream outputStream) throws IOException {
-        String encryptedNumber = getCardNumberFromRequest();
+    public void processRequest(Request clientRequest, ObjectOutputStream outputStream) throws IOException {
+        String encryptedNumber = getCardNumberFromRequest(clientRequest);
+        String username = ((DecryptionRequest) clientRequest).getUserSendingRequest();
 
-        if (requestIsValid(encryptedNumber)) {
+        if (requestIsValid(encryptedNumber, username)) {
             processValidRequest(encryptedNumber, outputStream);
         } else {
-            notifyUserForInvalidRequest(encryptedNumber, outputStream);
-        }
-    }
-
-    private boolean requestIsValid(String encryptedNumber) {
-        return cardNumberIsValid(encryptedNumber) && userHasValidAccessRights(clientName, AccessRights.DECRYPTION);
-    }
-
-    private void notifyUserForInvalidRequest(String encryptedNumber, ObjectOutputStream outputStream) throws IOException {
-        if (!userHasValidAccessRights(clientName, AccessRights.DECRYPTION)) {
-            notifyClientForInvalidRights("decryption", outputStream);
-        } else {
-            notifyClientForInvalidCardNumber(encryptedNumber, outputStream);
+            notifyUserForInvalidRequest(username, encryptedNumber, outputStream);
         }
     }
 
     @Override
-    public String getCardNumberFromRequest() {
+    public String getCardNumberFromRequest(Request clientRequest) {
         return ((DecryptionRequest) clientRequest).getCardNumber()
                 .replaceAll(" ", "");
+    }
+
+    private boolean requestIsValid(String encryptedNumber, String username) {
+        return cardNumberIsValid(encryptedNumber)
+                && userHasValidAccessRights(username, AccessRights.DECRYPTION);
     }
 
     @Override
@@ -64,5 +54,13 @@ public class DecryptionRequestHandler extends CardRequestHandler {
     public void returnCardNumberToClient(String decryptedNumber, ObjectOutputStream outputStream) throws IOException {
         Response result = new Response(ResponseStatus.SUCCESS, decryptedNumber);
         sendResponseToClient(result, outputStream);
+    }
+
+    private void notifyUserForInvalidRequest(String username, String encryptedNumber, ObjectOutputStream outputStream) throws IOException {
+        if (!userHasValidAccessRights(username, AccessRights.DECRYPTION)) {
+            notifyClientForInvalidRights("decryption", outputStream);
+        } else {
+            notifyClientForInvalidCardNumber(encryptedNumber, outputStream);
+        }
     }
 }

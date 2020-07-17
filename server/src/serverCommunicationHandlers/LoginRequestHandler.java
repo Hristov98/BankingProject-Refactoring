@@ -10,19 +10,16 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public class LoginRequestHandler extends RequestHandler {
-    private boolean successfulRequest;
-
-    public LoginRequestHandler(Request clientRequest, String clientName) {
-        super(clientRequest, clientName);
-    }
+    private boolean requestIsSuccessful;
 
     @Override
-    public void processRequest(ObjectOutputStream outputStream) throws IOException {
+    public void processRequest(Request clientRequest, ObjectOutputStream outputStream) throws IOException {
         String username = ((LoginRequest) clientRequest).getUsername();
         String password = ((LoginRequest) clientRequest).getPassword();
 
-        if (userExists(username, password)) {
-            notifyClientForSuccessfulLogin(username, outputStream);
+        requestIsSuccessful = userExists(username, password);
+        if (requestIsSuccessful) {
+            returnUsernameToClient(username, outputStream);
         } else {
             notifyClientForFailedLogin(outputStream);
         }
@@ -38,23 +35,18 @@ public class LoginRequestHandler extends RequestHandler {
         }
     }
 
-    private void notifyClientForSuccessfulLogin(String username, ObjectOutputStream outputStream) throws IOException {
-        setClientName(username);
+    private void returnUsernameToClient(String username, ObjectOutputStream outputStream) throws IOException {
         Response result = new Response(ResponseStatus.SUCCESS, username);
         sendResponseToClient(result, outputStream);
-
-        successfulRequest = true;
     }
 
     private void notifyClientForFailedLogin(ObjectOutputStream outputStream) throws IOException {
         String errorMessage = "You have entered an incorrect name and/or password.";
         Response result = new Response(ResponseStatus.FAILURE, errorMessage);
         sendResponseToClient(result, outputStream);
-
-        successfulRequest = false;
     }
 
-    public boolean isSuccessfulRequest() {
-        return successfulRequest;
+    public boolean isRequestSuccessful() {
+        return requestIsSuccessful;
     }
 }
