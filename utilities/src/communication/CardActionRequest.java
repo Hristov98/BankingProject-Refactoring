@@ -1,13 +1,11 @@
 package communication;
 
-import java.io.Serializable;
-
-public class EncryptionRequest extends Request implements Serializable {
+public class CardActionRequest extends Request {
     private final String cardNumber;
     private final String userSendingRequest;
 
-    public EncryptionRequest(String cardNumber, String userSendingRequest) {
-        super(RequestType.ENCRYPTION);
+    public CardActionRequest(RequestType type,String cardNumber, String userSendingRequest) {
+        super(type);
         this.cardNumber = cardNumber;
         this.userSendingRequest = userSendingRequest;
     }

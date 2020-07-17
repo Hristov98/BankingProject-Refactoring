@@ -1,13 +1,14 @@
 package clientCommunicationHandlers;
 
-import communication.DecryptionRequest;
+import communication.CardActionRequest;
+import communication.RequestType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
 public class DecryptionHandler extends ActionHandler {
     public DecryptionHandler(String cardNumber, String userSendingRequest) {
-        requestToServer = new DecryptionRequest(cardNumber, userSendingRequest);
+        requestToServer = new CardActionRequest(RequestType.DECRYPTION, cardNumber, userSendingRequest);
     }
 
     @Override

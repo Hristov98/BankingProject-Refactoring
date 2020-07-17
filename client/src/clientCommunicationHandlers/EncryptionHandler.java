@@ -1,13 +1,14 @@
 package clientCommunicationHandlers;
 
-import communication.EncryptionRequest;
+import communication.CardActionRequest;
+import communication.RequestType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
 public class EncryptionHandler extends ActionHandler {
     public EncryptionHandler(String cardNumber, String userSendingRequest) {
-        requestToServer = new EncryptionRequest(cardNumber, userSendingRequest);
+        requestToServer = new CardActionRequest(RequestType.ENCRYPTION, cardNumber, userSendingRequest);
     }
 
     @Override

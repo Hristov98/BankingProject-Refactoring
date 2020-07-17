@@ -1,9 +1,6 @@
 package serverCommunicationHandlers;
 
-import communication.DecryptionRequest;
-import communication.Request;
-import communication.Response;
-import communication.ResponseStatus;
+import communication.*;
 import userStorage.AccessRights;
 
 import java.io.IOException;
@@ -11,56 +8,31 @@ import java.io.ObjectOutputStream;
 
 public class DecryptionRequestHandler extends CardRequestHandler {
     @Override
-    public void processRequest(Request clientRequest, ObjectOutputStream outputStream) throws IOException {
-        String encryptedNumber = getCardNumberFromRequest(clientRequest);
-        String username = ((DecryptionRequest) clientRequest).getUserSendingRequest();
+    protected boolean requestIsValid(Request clientRequest) {
+        String cardNumber = getCardNumberFromRequest(clientRequest);
+        String username = getUsernameFromRequest(clientRequest);
 
-        if (requestIsValid(encryptedNumber, username)) {
-            processValidRequest(encryptedNumber, outputStream);
-        } else {
-            notifyUserForInvalidRequest(username, encryptedNumber, outputStream);
-        }
+        return cardNumberInputIsValid(cardNumber) && userHasValidAccessRights(username, AccessRights.DECRYPTION);
     }
 
     @Override
-    public String getCardNumberFromRequest(Request clientRequest) {
-        return ((DecryptionRequest) clientRequest).getCardNumber()
-                .replaceAll(" ", "");
-    }
-
-    private boolean requestIsValid(String encryptedNumber, String username) {
-        return cardNumberIsValid(encryptedNumber)
-                && userHasValidAccessRights(username, AccessRights.DECRYPTION);
-    }
-
-    @Override
-    public boolean cardNumberIsValid(String cardNumber) {
+    protected boolean cardNumberInputIsValid(String cardNumber) {
         return validator.encryptedCardNumberIsValid(cardNumber);
     }
 
     @Override
-    public void processValidRequest(String cardNumber, ObjectOutputStream outputStream) throws IOException {
-        String decryptedNumber = getModifiedCard(cardNumber);
-        returnCardNumberToClient(decryptedNumber, outputStream);
-        saveCardPairToTable(decryptedNumber, cardNumber);
-    }
-
-    @Override
-    public String getModifiedCard(String cardNumber) {
+    protected String getModifiedCard(String cardNumber) {
         return cipher.decryptCardNumber(cardNumber);
     }
 
-    @Override
-    public void returnCardNumberToClient(String decryptedNumber, ObjectOutputStream outputStream) throws IOException {
-        Response result = new Response(ResponseStatus.SUCCESS, decryptedNumber);
-        sendResponseToClient(result, outputStream);
-    }
+    protected void notifyUserForInvalidRequest(Request clientRequest, ObjectOutputStream outputStream) throws IOException {
+        String cardNumber = getCardNumberFromRequest(clientRequest);
+        String username = getUsernameFromRequest(clientRequest);
 
-    private void notifyUserForInvalidRequest(String username, String encryptedNumber, ObjectOutputStream outputStream) throws IOException {
         if (!userHasValidAccessRights(username, AccessRights.DECRYPTION)) {
             notifyClientForInvalidRights("decryption", outputStream);
         } else {
-            notifyClientForInvalidCardNumber(encryptedNumber, outputStream);
+            notifyClientForInvalidCardNumber(cardNumber, outputStream);
         }
     }
 }
