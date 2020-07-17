@@ -10,18 +10,18 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public class EncryptionRequestHandler extends CardRequestHandler {
-    public EncryptionRequestHandler(Request clientRequest, ObjectOutputStream outputStream, String clientName) {
-        super(clientRequest, outputStream, clientName);
+    public EncryptionRequestHandler(Request clientRequest, String clientName) {
+        super(clientRequest, clientName);
     }
 
     @Override
-    public void processRequest() throws IOException {
+    public void processRequest(ObjectOutputStream outputStream) throws IOException {
         String cardNumber = getCardNumberFromRequest();
 
         if (requestIsValid(cardNumber)) {
-            processValidRequest(cardNumber);
+            processValidRequest(cardNumber, outputStream);
         } else {
-            notifyUserForInvalidRequest(cardNumber);
+            notifyUserForInvalidRequest(cardNumber, outputStream);
         }
     }
 
@@ -29,11 +29,11 @@ public class EncryptionRequestHandler extends CardRequestHandler {
         return cardNumberIsValid(encryptedNumber) && userHasValidAccessRights(clientName, AccessRights.ENCRYPTION);
     }
 
-    private void notifyUserForInvalidRequest(String encryptedNumber) throws IOException {
+    private void notifyUserForInvalidRequest(String encryptedNumber, ObjectOutputStream outputStream) throws IOException {
         if (!userHasValidAccessRights(clientName, AccessRights.ENCRYPTION)) {
-            notifyClientForInvalidRights("encryption");
+            notifyClientForInvalidRights("encryption", outputStream);
         } else {
-            notifyClientForInvalidCardNumber(encryptedNumber);
+            notifyClientForInvalidCardNumber(encryptedNumber, outputStream);
         }
     }
 
@@ -50,9 +50,9 @@ public class EncryptionRequestHandler extends CardRequestHandler {
     }
 
     @Override
-    public void processValidRequest(String cardNumber) throws IOException {
+    public void processValidRequest(String cardNumber, ObjectOutputStream outputStream) throws IOException {
         String encryptedCard = getModifiedCard(cardNumber);
-        returnCardNumberToClient(encryptedCard);
+        returnCardNumberToClient(encryptedCard, outputStream);
         saveCardPairToTable(cardNumber, encryptedCard);
     }
 
@@ -62,8 +62,8 @@ public class EncryptionRequestHandler extends CardRequestHandler {
     }
 
     @Override
-    public void returnCardNumberToClient(String encryptedNumber) throws IOException {
+    public void returnCardNumberToClient(String encryptedNumber, ObjectOutputStream outputStream) throws IOException {
         Response result = new Response(ResponseStatus.SUCCESS, encryptedNumber);
-        sendResponseToClient(result);
+        sendResponseToClient(result, outputStream);
     }
 }

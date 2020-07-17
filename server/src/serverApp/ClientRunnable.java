@@ -33,7 +33,7 @@ public class ClientRunnable implements Runnable {
     }
 
     private void initialiseFactory() {
-        factory = new RequestHandlerFactory(null, outputStream,
+        factory = new RequestHandlerFactory(null,
                 clientName);
     }
 
@@ -85,7 +85,7 @@ public class ClientRunnable implements Runnable {
     private void processRequest(Request clientRequest) throws IOException {
         factory.setClientRequest(clientRequest);
         RequestHandler processor = factory.createRequestProcessor(clientRequest.getType());
-        processor.processRequest();
+        processor.processRequest(outputStream);
 
         if (loginIsSuccessful(clientRequest.getType(), processor)) {
             factory.setClientName(processor.getClientName());
@@ -95,8 +95,6 @@ public class ClientRunnable implements Runnable {
 
     private boolean loginIsSuccessful(RequestType requestType,
                                       RequestHandler requestHandler) {
-        //if the request isn't for a login, the first boolean will return false and end the check
-        //so we won't need to fear improper casting from derived RequestProcessor classes
         return isLoginRequest(requestType) && isSuccessful(requestHandler);
     }
 

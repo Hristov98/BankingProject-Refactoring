@@ -17,8 +17,8 @@ public abstract class CardRequestHandler extends RequestHandler {
     protected final SubstitutionCipher cipher;
     protected final CardValidator validator;
 
-    public CardRequestHandler(Request clientRequest, ObjectOutputStream outputStream, String clientName) {
-        super(clientRequest, outputStream, clientName);
+    public CardRequestHandler(Request clientRequest, String clientName) {
+        super(clientRequest, clientName);
         cipher = new SubstitutionCipher(5);
         validator = new CardValidator();
     }
@@ -27,11 +27,11 @@ public abstract class CardRequestHandler extends RequestHandler {
 
     public abstract boolean cardNumberIsValid(String cardNumber);
 
-    public abstract void processValidRequest(String cardNumber) throws IOException;
+    public abstract void processValidRequest(String cardNumber,ObjectOutputStream outputStream) throws IOException;
 
     public abstract String getModifiedCard(String cardNumber);
 
-    public abstract void returnCardNumberToClient(String encryptedNumber) throws IOException;
+    public abstract void returnCardNumberToClient(String encryptedNumber,ObjectOutputStream outputStream) throws IOException;
 
     protected boolean userHasValidAccessRights(String username, AccessRights neededRights) {
         User user = findUserByName(username);
@@ -47,18 +47,18 @@ public abstract class CardRequestHandler extends RequestHandler {
         return userRights.equals(neededRights) || userRights.equals(AccessRights.FULL_ACCESS);
     }
 
-    protected void notifyClientForInvalidRights(String action) throws IOException {
+    protected void notifyClientForInvalidRights(String action,ObjectOutputStream outputStream) throws IOException {
         String errorMessage = String.format("You do not have the permissions to perform this %s.", action);
 
         Response result = new Response(ResponseStatus.FAILURE, errorMessage);
-        sendResponseToClient(result);
+        sendResponseToClient(result, outputStream);
     }
 
-    protected void notifyClientForInvalidCardNumber(String cardNumber) throws IOException {
+    protected void notifyClientForInvalidCardNumber(String cardNumber,ObjectOutputStream outputStream) throws IOException {
         String errorMessage = String.format("%s is not a valid card", cardNumber);
 
         Response result = new Response(ResponseStatus.FAILURE, errorMessage);
-        sendResponseToClient(result);
+        sendResponseToClient(result, outputStream);
     }
 
     protected void saveCardPairToTable(String cardNumber, String encryptedNumber) {

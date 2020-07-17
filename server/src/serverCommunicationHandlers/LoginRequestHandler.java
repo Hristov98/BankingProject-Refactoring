@@ -12,19 +12,19 @@ import java.io.ObjectOutputStream;
 public class LoginRequestHandler extends RequestHandler {
     private boolean successfulRequest;
 
-    public LoginRequestHandler(Request clientRequest, ObjectOutputStream outputStream, String clientName) {
-        super(clientRequest, outputStream, clientName);
+    public LoginRequestHandler(Request clientRequest, String clientName) {
+        super(clientRequest, clientName);
     }
 
     @Override
-    public void processRequest() throws IOException {
+    public void processRequest(ObjectOutputStream outputStream) throws IOException {
         String username = ((LoginRequest) clientRequest).getUsername();
         String password = ((LoginRequest) clientRequest).getPassword();
 
         if (userExists(username, password)) {
-            notifyClientForSuccessfulLogin(username);
+            notifyClientForSuccessfulLogin(username, outputStream);
         } else {
-            notifyClientForFailedLogin();
+            notifyClientForFailedLogin(outputStream);
         }
     }
 
@@ -38,18 +38,18 @@ public class LoginRequestHandler extends RequestHandler {
         }
     }
 
-    private void notifyClientForSuccessfulLogin(String username) throws IOException {
+    private void notifyClientForSuccessfulLogin(String username, ObjectOutputStream outputStream) throws IOException {
         setClientName(username);
         Response result = new Response(ResponseStatus.SUCCESS, username);
-        sendResponseToClient(result);
+        sendResponseToClient(result, outputStream);
 
         successfulRequest = true;
     }
 
-    private void notifyClientForFailedLogin() throws IOException {
+    private void notifyClientForFailedLogin(ObjectOutputStream outputStream) throws IOException {
         String errorMessage = "You have entered an incorrect name and/or password.";
         Response result = new Response(ResponseStatus.FAILURE, errorMessage);
-        sendResponseToClient(result);
+        sendResponseToClient(result, outputStream);
 
         successfulRequest = false;
     }

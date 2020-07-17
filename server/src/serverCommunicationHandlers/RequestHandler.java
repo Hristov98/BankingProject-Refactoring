@@ -8,17 +8,14 @@ import userStorage.UserController;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public abstract class RequestHandler {
-    private final ObjectOutputStream outputStream;
     protected final Request clientRequest;
     protected final UserController userController;
     protected String clientName;
 
-    public RequestHandler(Request clientRequest, ObjectOutputStream outputStream, String clientName) {
+    public RequestHandler(Request clientRequest, String clientName) {
         this.clientRequest = clientRequest;
-        this.outputStream = outputStream;
         setClientName(clientName);
 
         userController = new UserController("users.ser");
@@ -33,7 +30,7 @@ public abstract class RequestHandler {
         return clientName;
     }
 
-    public abstract void processRequest() throws IOException;
+    public abstract void processRequest(ObjectOutputStream outputStream) throws IOException;
 
     protected User findUserByName(String username) {
         ArrayList<User> users = userController.getRegisteredUsers().getUsers();
@@ -47,7 +44,7 @@ public abstract class RequestHandler {
         return null;
     }
 
-    protected void sendResponseToClient(Response response) throws IOException {
+    protected void sendResponseToClient(Response response, ObjectOutputStream outputStream) throws IOException {
         outputStream.writeObject(response);
         outputStream.flush();
     }

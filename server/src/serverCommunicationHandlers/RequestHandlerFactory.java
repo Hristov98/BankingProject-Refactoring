@@ -3,16 +3,12 @@ package serverCommunicationHandlers;
 import communication.Request;
 import communication.RequestType;
 
-import java.io.ObjectOutputStream;
-
 public class RequestHandlerFactory {
-    private final ObjectOutputStream outputStream;
     private Request clientRequest;
     private String clientName;
 
-    public RequestHandlerFactory(Request clientRequest, ObjectOutputStream outputStream, String clientName) {
+    public RequestHandlerFactory(Request clientRequest, String clientName) {
         this.clientRequest = clientRequest;
-        this.outputStream = outputStream;
         this.clientName = clientName;
     }
 
@@ -27,13 +23,13 @@ public class RequestHandlerFactory {
     public RequestHandler createRequestProcessor(RequestType type) {
         switch (type) {
             case LOGIN: {
-                return new LoginRequestHandler(clientRequest, outputStream, clientName);
+                return new LoginRequestHandler(clientRequest, clientName);
             }
             case ENCRYPTION: {
-                return new EncryptionRequestHandler(clientRequest, outputStream, clientName);
+                return new EncryptionRequestHandler(clientRequest, clientName);
             }
             case DECRYPTION: {
-                return new DecryptionRequestHandler(clientRequest, outputStream, clientName);
+                return new DecryptionRequestHandler(clientRequest, clientName);
             }
             default: {
                 return null;
